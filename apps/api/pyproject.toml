@@ -1,0 +1,26 @@
+[project]
+name = "agentverse-api"
+version = "0.1.0"
+description = "AgentVerse FastAPI backend"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.115",
+    "uvicorn[standard]>=0.30",
+    "agentverse-shared",
+    "agentverse-graph-core",
+    "agentverse-ontology",
+    "agentverse-graphrag",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+sources = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentverse/api"]
+
+[tool.uv.scripts]
+dev = "uvicorn agentverse.api.main:app --reload --host 0.0.0.0 --port 8000"

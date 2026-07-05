@@ -1,0 +1,89 @@
+[project]
+name = "agentverse"
+version = "0.1.0"
+description = "The Open Knowledge Graph for AI Agents, GraphRAG, MCP and Multi-Agent Systems"
+requires-python = ">=3.12"
+authors = [
+    { name = "AgentVerse Contributors" },
+]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+
+[project.urls]
+homepage = "https://github.com/your-org/agentverse"
+repository = "https://github.com/your-org/agentverse"
+documentation = "https://agentverse.dev"
+
+# ============================================
+# UV WORKSPACE DEFINITION
+# ============================================
+[tool.uv.workspace]
+members = [
+    "packages/*",
+    "apps/api",
+    "apps/worker",
+]
+
+# ============================================
+# DEV TOOLING — Ruff
+# ============================================
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+show-fixes = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "ARG", "C4", "PTH", "BLE", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+# ============================================
+# DEV TOOLING — Mypy
+# ============================================
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+ignore_missing_imports = true
+explicit_package_bases = true
+namespace_packages = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+# ============================================
+# DEV TOOLING — Pytest
+# ============================================
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short --strict-markers"
+asyncio_mode = "auto"
+
+# ============================================
+# DEV TOOLING — Coverage
+# ============================================
+[tool.coverage.run]
+source = ["agentverse"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "# pragma: no cover",
+    "if __name__ == \"__main__\":",
+    "raise NotImplementedError",
+]
+
+# ============================================
+# UV SOURCES (cross-package dependency mapping)
+# ============================================
+[tool.uv.sources]
+agentverse-shared = { workspace = true }
+agentverse-graph-core = { workspace = true }
+agentverse-ontology = { workspace = true }
+agentverse-crawler = { workspace = true }
+agentverse-extractor = { workspace = true }
+agentverse-graphrag = { workspace = true }
+agentverse-api = { workspace = true }
+agentverse-worker = { workspace = true }

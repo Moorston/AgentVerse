@@ -1,0 +1,19 @@
+[project]
+name = "agentverse-graph-core"
+version = "0.1.0"
+description = "AgentVerse core graph database abstractions"
+requires-python = ">=3.12"
+dependencies = [
+    "neo4j>=5.20",
+    "agentverse-shared",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+sources = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentverse/graph_core"]

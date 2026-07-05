@@ -1,0 +1,21 @@
+[project]
+name = "agentverse-graphrag"
+version = "0.1.0"
+description = "AgentVerse GraphRAG engine"
+requires-python = ">=3.12"
+dependencies = [
+    "sentence-transformers>=3.0",
+    "pgvector>=0.3",
+    "agentverse-graph-core",
+    "agentverse-shared",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+sources = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentverse/graphrag"]
