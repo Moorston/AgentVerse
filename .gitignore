@@ -1,40 +1,83 @@
-# Python
+# ============================================
+# AgentVerse .gitignore
+# ============================================
+
+# ─── Python ─────────────────────────────────
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
+*.egg
 dist/
 build/
 .eggs/
-*.egg
+*.whl
 .pytest_cache/
 .coverage
+.coverage.*
 coverage/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
 .venv/
+.venv.bak/
 uv.lock
+*.so
 
-# Node
+# ─── Node.js / Next.js ─────────────────────
 node_modules/
 .next/
+.nuxt/
 out/
+*.tsbuildinfo
+next-env.d.ts
 
-# IDE
+# ─── IDE / Editor ──────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
 
-# OS
+# ─── OS ────────────────────────────────────
 .DS_Store
+.DS_Store?
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# Environment
+# ─── Environment / Secrets ─────────────────
 .env
 .env.local
+.env.development
 .env.production
+.env.staging
+*.pem
+*.key
 
-# Docker
+# ─── Docker ────────────────────────────────
 .docker/
+docker-compose.override.yml
+
+# ─── Trellis / OpenSpec / Claude Code ──────
+.trellis/workspace/
+.trellis/tasks/*/
+openspec/changes/archive/
+.cursor/
+.claude/projects/
+
+# ─── Logs ──────────────────────────────────
+*.log
+logs/
+
+# ─── Misc ──────────────────────────────────
+*.bak
+*.tmp
+*.temp
+*.orig
