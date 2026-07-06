@@ -12,6 +12,7 @@ import asyncio
 from typing import Any
 
 from agentverse.crawler.sources.arxiv import ArxivCrawler
+from agentverse.crawler.types import CrawlRequest
 from agentverse.extractor.extractors.paper import PaperExtractor
 from agentverse.extractor.extractors.concept import ConceptExtractor
 from agentverse.extractor.extractors.relationship import RelationshipExtractor
@@ -46,7 +47,9 @@ async def run_pipeline(
     print(f"Step 1: Crawling arXiv (max {max_papers} papers)...")
     print(f"{'='*50}")
     crawler = ArxivCrawler()
-    crawl_result = await crawler.crawl(max_results=max_papers, categories=["cs.AI", "cs.LG", "cs.CL"])
+    crawl_result = await crawler.crawl(CrawlRequest(
+        max_results=max_papers, categories=["cs.AI", "cs.LG", "cs.CL"],
+    ))
 
     stats["crawled"] = len(crawl_result.items)
     print(f"  Crawled: {stats['crawled']} papers")

@@ -1,0 +1,119 @@
+{
+  "evolution_chains": [
+    {
+      "chain": [
+        {
+          "name": "StatefulLinkTrackerMonitor",
+          "type": "concept",
+          "category": "",
+          "description": ""
+        },
+        {
+          "name": "DiffMonitors",
+          "type": "concept",
+          "category": "",
+          "description": ""
+        }
+      ],
+      "length": 2
+    }
+  ],
+  "paper_concept_links": [
+    {
+      "paper": "Distributed Attacks in Persistent-State AI Control",
+      "concept": "IterativeVibeCoding",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Distributed Attacks in Persistent-State AI Control",
+      "concept": "StatefulLinkTracker",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Distributed Attacks in Persistent-State AI Control",
+      "concept": "TrajectoryMonitor",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Distributed Attacks in Persistent-State AI Control",
+      "concept": "DiffMonitor",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Distributed Attacks in Persistent-State AI Control",
+      "concept": "MonitorEnsemble",
+      "category": "multi_agent",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "LACUNA: A Testbed for Evaluating Localization Precision for LLM Unlearning",
+      "concept": "MachineUnlearning",
+      "category": "memory",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "LACUNA: A Testbed for Evaluating Localization Precision for LLM Unlearning",
+      "concept": "LocalizeFirstUnlearnSecond",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "LACUNA: A Testbed for Evaluating Localization Precision for LLM Unlearning",
+      "concept": "Lacuna",
+      "category": "protocol",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "LACUNA: A Testbed for Evaluating Localization Precision for LLM Unlearning",
+      "concept": "MaskedContinualPretraining",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "LACUNA: A Testbed for Evaluating Localization Precision for LLM Unlearning",
+      "concept": "GradientBasedUnlearning",
+      "category": "memory",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Program-as-Weights: A Programming Paradigm for Fuzzy Functions",
+      "concept": "FuzzyFunctionProgramming",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Program-as-Weights: A Programming Paradigm for Fuzzy Functions",
+      "concept": "ProgramAsWeights",
+      "category": "workflow",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Program-as-Weights: A Programming Paradigm for Fuzzy Functions",
+      "concept": "DirectPrompting",
+      "category": "prompt_engineering",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Online Safety Monitoring for LLMs",
+      "concept": "RiskControl",
+      "category": "protocol",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "Online Safety Monitoring for LLMs",
+      "concept": "SequentialHypothesisTesting",
+      "category": "protocol",
+      "date": "2026-07-02"
+    },
+    {
+      "paper": "ReContext: Recursive Evidence Replay as LLM Harness for Long-Context Reasoning",
+      "concept": "ReContext",
+      "category": "reasoning",
+      "date": "2026-07-02"
+    }
+  ]
+}

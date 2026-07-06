@@ -4,19 +4,22 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import Any
 
+from agentverse.crawler.types import NewsItemDict
+
 import httpx
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
 # Default RSS feeds for AI industry news
 DEFAULT_FEEDS: dict[str, str] = {
-    "huggingface_papers": "https://huggingface.co/papers/rss",
-    "openai_blog": "https://openai.com/blog/rss.xml",
-    "anthropic_blog": "https://www.anthropic.com/feed.xml",
+    "arxiv_ai": "https://rss.arxiv.org/rss/cs.AI",
+    "arxiv_ml": "https://rss.arxiv.org/rss/cs.LG",
+    "arxiv_cl": "https://rss.arxiv.org/rss/cs.CL",
 }
 
 
@@ -28,16 +31,16 @@ class RSSCrawler(BaseCrawler):
 
     async def crawl(
         self,
-        feeds: dict[str, str] | None = None,
-        since: str = "",
-        **kwargs: Any,
+        request: CrawlRequest | None = None,
     ) -> CrawlResult:
         """Fetch and parse RSS feeds.
 
         Args:
-            feeds: Dict of feed_name -> feed_url (default: DEFAULT_FEEDS).
-            since: ISO date string to filter items after this date.
+            request: Structured request with optional ``since`` and ``feeds`` fields.
         """
+        r: CrawlRequest = request or {}
+        feeds: dict[str, str] | None = r.get("feeds")  # type: ignore[assignment]
+        since: str = r.get("since", "")
         target_feeds = feeds or DEFAULT_FEEDS
         items: list[dict[str, Any]] = []
         errors: list[str] = []
@@ -53,14 +56,14 @@ class RSSCrawler(BaseCrawler):
         logger.info("RSS crawl complete", feeds=len(target_feeds), items=len(items), errors=len(errors))
         return CrawlResult(source="rss", items=items, errors=errors)
 
-    async def _fetch_feed(self, feed_name: str, feed_url: str, since: str = "") -> list[dict[str, Any]]:
+    async def _fetch_feed(self, feed_name: str, feed_url: str, since: str = "") -> list[NewsItemDict]:
         """Fetch and parse a single RSS feed."""
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.get(feed_url)
             response.raise_for_status()
 
         root = ET.fromstring(response.text)
-        items: list[dict[str, Any]] = []
+        items: list[NewsItemDict] = []
 
         # Try RSS 2.0 format
         for item in root.findall(".//item"):
@@ -77,7 +80,7 @@ class RSSCrawler(BaseCrawler):
 
         return items
 
-    def _parse_rss_item(self, item: ET.Element, source: str) -> dict[str, Any] | None:
+    def _parse_rss_item(self, item: ET.Element, source: str) -> NewsItemDict | None:
         """Parse an RSS 2.0 item."""
         title = self._text(item, "title")
         link = self._text(item, "link")
@@ -95,7 +98,7 @@ class RSSCrawler(BaseCrawler):
             "published_at": self._parse_date(pub_date),
         }
 
-    def _parse_atom_entry(self, entry: ET.Element, source: str, ns: dict[str, str]) -> dict[str, Any] | None:
+    def _parse_atom_entry(self, entry: ET.Element, source: str, ns: dict[str, str]) -> NewsItemDict | None:
         """Parse an Atom entry."""
         title_elem = entry.find("atom:title", ns)
         title = title_elem.text if title_elem is not None and title_elem.text else ""

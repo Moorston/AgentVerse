@@ -1,0 +1,241 @@
+[
+  {
+    "name": "langchain-ai/langgraph",
+    "description": "Build resilient agents.",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "agents",
+      "ai",
+      "ai-agents",
+      "chatgpt",
+      "deepagents",
+      "enterprise",
+      "framework",
+      "gemini",
+      "generative-ai",
+      "langchain",
+      "langgraph",
+      "llm",
+      "multiagent",
+      "open-source",
+      "openai",
+      "pydantic",
+      "python",
+      "rag"
+    ],
+    "implements": []
+  },
+  {
+    "name": "crewAIInc/crewAI",
+    "description": "Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "agents",
+      "ai",
+      "ai-agents",
+      "aiagentframework",
+      "llms"
+    ],
+    "implements": []
+  },
+  {
+    "name": "microsoft/autogen",
+    "description": "A programming framework for agentic AI",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "agentic",
+      "agentic-agi",
+      "agents",
+      "ai",
+      "autogen",
+      "autogen-ecosystem",
+      "chatgpt",
+      "framework",
+      "llm-agent",
+      "llm-framework"
+    ],
+    "implements": []
+  },
+  {
+    "name": "run-llama/llama_index",
+    "description": "LlamaIndex is the leading document agent and OCR platform",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "agents",
+      "application",
+      "data",
+      "fine-tuning",
+      "framework",
+      "llamaindex",
+      "llm",
+      "multi-agents",
+      "rag",
+      "vector-database"
+    ],
+    "implements": []
+  },
+  {
+    "name": "microsoft/semantic-kernel",
+    "description": "Integrate cutting-edge LLM technology quickly and easily into your apps",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "C#",
+    "topics": [
+      "ai",
+      "artificial-intelligence",
+      "llm",
+      "openai",
+      "sdk"
+    ],
+    "implements": []
+  },
+  {
+    "name": "langgenius/dify",
+    "description": "Production-ready platform for agentic workflow development.",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "TypeScript",
+    "topics": [
+      "agent",
+      "agentic-ai",
+      "agentic-framework",
+      "agentic-workflow",
+      "ai",
+      "automation",
+      "gemini",
+      "genai",
+      "gpt",
+      "gpt-4",
+      "llm",
+      "low-code",
+      "mcp",
+      "nextjs",
+      "no-code",
+      "openai",
+      "orchestration",
+      "python",
+      "rag",
+      "workflow"
+    ],
+    "implements": []
+  },
+  {
+    "name": "openai/swarm",
+    "description": "Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team.",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [],
+    "implements": []
+  },
+  {
+    "name": "mem0ai/mem0",
+    "description": "Universal memory layer for AI Agents",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "agents",
+      "ai",
+      "ai-agents",
+      "application",
+      "chatbots",
+      "chatgpt",
+      "genai",
+      "llm",
+      "long-term-memory",
+      "memory",
+      "memory-management",
+      "python",
+      "rag",
+      "state-management"
+    ],
+    "implements": []
+  },
+  {
+    "name": "getzep/zep",
+    "description": "Zep | Examples, Integrations, & More",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "ai",
+      "knowledge-graphs",
+      "language-model",
+      "llm"
+    ],
+    "implements": []
+  },
+  {
+    "name": "langchain-ai/langmem",
+    "description": null,
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [],
+    "implements": []
+  },
+  {
+    "name": "letta-ai/letta",
+    "description": "Platform for stateful agents: AI with advanced memory that can learn and self-improve over time.",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "ai",
+      "ai-agents",
+      "llm",
+      "llm-agent"
+    ],
+    "implements": []
+  },
+  {
+    "name": "topoteretes/cognee",
+    "description": "Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory across sessions with a self-hosted knowledge graph engine.",
+    "github_url": "",
+    "stars": 0,
+    "forks": 0,
+    "language": "Python",
+    "topics": [
+      "agent-memory",
+      "agent-skills",
+      "ai",
+      "ai-agents",
+      "ai-memory",
+      "cognitive-architecture",
+      "cognitive-memory",
+      "context-engineering",
+      "contributions-welcome",
+      "good-first-issue",
+      "good-first-pr",
+      "graph-database",
+      "graph-rag",
+      "help-wanted",
+      "knowledge",
+      "knowledge-graph",
+      "memory-management",
+      "open-source",
+      "vector-database"
+    ],
+    "implements": []
+  }
+]

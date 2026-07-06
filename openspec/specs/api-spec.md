@@ -26,6 +26,7 @@ GET    /api/v1/frameworks/{name}            — framework detail
 5. Error responses: {"error", "detail", "status_code"}
 6. Rate limiting: 60 req/min, 1000 req/hour
 7. CORS: allow all origins (development)
+8. Metrics state SHALL be maintained in a single location (core/metrics.py) — api/v1/metrics.py SHALL import from it, not declare its own counters
 
 ## Middleware Stack
 ```

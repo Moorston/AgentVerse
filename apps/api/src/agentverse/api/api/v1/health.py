@@ -1,8 +1,9 @@
 """Health check endpoint with full system status."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from agentverse.api.core.cache import query_cache, concept_cache
+from agentverse.api.core.context import AppContext, get_context
 from agentverse.api.core.query_monitor import get_query_stats
 from agentverse.shared.logging import get_logger
 
@@ -11,7 +12,7 @@ router = APIRouter()
 
 
 @router.get("/health")
-async def health_check() -> dict:
+async def health_check(ctx: AppContext = Depends(get_context)) -> dict:
     """Return comprehensive service health status.
 
     Returns:
@@ -27,10 +28,9 @@ async def health_check() -> dict:
         "cache": {},
     }
 
-    # Check Neo4j
+    # Check Neo4j via AppContext
     try:
-        from agentverse.api.core.dependencies import get_graph_client
-        client = await get_graph_client()
+        client = await ctx.get_client()
         neo4j_ok = await client.health_check()
         node_count = await client.node_count()
         rel_count = await client.relationship_count()

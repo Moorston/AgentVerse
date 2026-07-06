@@ -20,7 +20,7 @@ async def list_frameworks(
 ) -> list[dict[str, Any]]:
     """List all frameworks in the knowledge graph."""
     offset = (page - 1) * size
-    results = await repo.run(_query(
+    results = await repo.execute_raw(
         """
         MATCH (f:Framework)
         OPTIONAL MATCH (f)-[r:IMPLEMENTS]->(c:Concept)
@@ -29,7 +29,7 @@ async def list_frameworks(
         SKIP $offset LIMIT $limit
         """,
         {"offset": offset, "limit": size},
-    ))
+    )
     return [dict(r) for r in results]
 
 
@@ -39,14 +39,14 @@ async def get_framework(
     repo: BaseRepository = Depends(get_repository),
 ) -> dict[str, Any]:
     """Get framework details with all relationships."""
-    results = await repo.run(_query(
+    results = await repo.execute_raw(
         """
         MATCH (f:Framework {name: $name})
         OPTIONAL MATCH (f)-[r]-(m)
         RETURN f, collect({rel: type(r), target: m.name, labels: labels(m)}) AS connections
         """,
         {"name": name},
-    ))
+    )
     if not results:
         return {"error": f"Framework '{name}' not found", "name": name}
 
@@ -58,8 +58,3 @@ async def get_framework(
         "stars": fw.get("stars", 0),
         "connections": record.get("connections", []),
     }
-
-
-def _query(cql: str, params: dict[str, Any]) -> Any:
-    from agentverse.graph_core.models.query import Query
-    return Query(cql, params)

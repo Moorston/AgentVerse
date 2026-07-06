@@ -3,18 +3,31 @@
 from agentverse.extractor.base import BaseExtractor, ExtractionResult
 from agentverse.extractor.llm.client import LLMClient
 from agentverse.extractor.llm.prompts import CONCEPT_EXTRACTION_PROMPT
+from agentverse.extractor.types import ExtractionRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
 SYSTEM_PROMPT = """You are an AI Agent domain expert. Extract key concepts from the text.
+
+STRICT RULES:
+1. ALL concept names MUST be PascalCase (e.g., ChainOfThought, Not chain-of-thought)
+2. Do NOT extract generic terms: "LLMs", "AI", "models", "data", "safety", "performance", "results"
+3. ONLY extract specific techniques, methods, frameworks, architectures, or well-known patterns
+4. Each concept MUST have a one-sentence description and a category
+
+Valid categories: reasoning, planning, memory, tool_use, reflection, multi_agent, workflow, protocol, rag, prompt_engineering
+
+GOOD examples: ChainOfThought, ReAct, Reflexion, ToolCalling, GraphRAG, ReWOO, PlanAndExecute
+BAD examples: LLMs, artificial intelligence, machine learning, large language model, the model, our method
+
 Return valid JSON:
 {
   "concepts": [
     {
-      "name": "concept name (PascalCase or well-known acronym)",
+      "name": "PascalCaseName",
       "description": "one sentence description",
-      "category": "reasoning|planning|memory|tool_use|reflection|multi_agent|workflow|protocol|rag|prompt_engineering"
+      "category": "one of the valid categories above"
     }
   ]
 }"""
@@ -26,8 +39,9 @@ class ConceptExtractor(BaseExtractor):
     def __init__(self, llm_client: LLMClient | None = None) -> None:
         self._client = llm_client or LLMClient()
 
-    async def extract(self, text: str, **kwargs) -> ExtractionResult:
+    async def extract(self, request: ExtractionRequest) -> ExtractionResult:
         """Extract concepts and their relationships from text."""
+        text = request.get("text", "")
         prompt = CONCEPT_EXTRACTION_PROMPT.format(text=text)
 
         try:

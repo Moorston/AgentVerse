@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 interface TimelineNode {
   name: string;
@@ -35,13 +35,46 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function TimelinePage() {
   const [activeChain, setActiveChain] = useState<"agent" | "memory">("agent");
+  const [agentChain, setAgentChain] = useState<TimelineNode[]>(EVOLUTION_CHAIN);
+  const [memoryChain, setMemoryChain] = useState<TimelineNode[]>(MEMORY_EVOLUTION);
+  const [loading, setLoading] = useState(true);
 
-  const chain = activeChain === "agent" ? EVOLUTION_CHAIN : MEMORY_EVOLUTION;
+  // Load timeline data from JSON file
+  useEffect(() => {
+    let cancelled = false;
+    async function loadJsonData() {
+      try {
+        const res = await fetch("/data/timeline.json");
+        if (res.ok && !cancelled) {
+          const json = await res.json();
+          if (json.agent_evolution) setAgentChain(json.agent_evolution);
+          if (json.memory_evolution) setMemoryChain(json.memory_evolution);
+          // Also handle flat array format
+          if (Array.isArray(json)) {
+            const agent = json.filter((n: TimelineNode) => n.category !== "memory");
+            const mem = json.filter((n: TimelineNode) => n.category === "memory");
+            if (agent.length > 0) setAgentChain(agent);
+            if (mem.length > 0) setMemoryChain(mem);
+          }
+        }
+      } catch {
+        // Keep hardcoded chains as fallback
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadJsonData();
+    return () => { cancelled = true; };
+  }, []);
+
+  const chain = activeChain === "agent" ? agentChain : memoryChain;
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <h1 className="text-3xl font-bold mb-2">Evolution Timeline</h1>
       <p className="text-gray-600 mb-8">Track how AI Agent architectures evolve over time</p>
+
+      {loading && <p className="text-gray-500 mb-4">Loading timeline data...</p>}
 
       {/* Chain Selector */}
       <div className="flex gap-4 mb-8">

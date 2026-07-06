@@ -2,12 +2,13 @@
 
 from typing import Any
 
+from agentverse.extractor.types import ExtractionRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-async def run_extract(text: str, source: str = "paper", **kwargs) -> dict[str, Any]:
+async def run_extract(text: str, source: str = "paper", **kwargs: Any) -> dict[str, Any]:
     """Execute an extraction task.
 
     Args:
@@ -32,7 +33,8 @@ async def run_extract(text: str, source: str = "paper", **kwargs) -> dict[str, A
         logger.warning("Unknown extractor source", source=source)
         return {}
 
-    result = await extractor.extract(text, **kwargs)
+    request: ExtractionRequest = {"text": text, **kwargs}
+    result = await extractor.extract(request)
 
     logger.info(
         "Extraction complete",

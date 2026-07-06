@@ -7,15 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "cytoscape": "^3.30.0",
-    "reactflow": "^11.11.0",
-    "lucide-react": "^0.460.0"
+    "cytoscape": "^3.30.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -28,6 +28,8 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.0.0",
     "vitest": "^2.0.0",
-    "@testing-library/react": "^16.0.0"
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "jsdom": "^25.0.0"
   }
 }

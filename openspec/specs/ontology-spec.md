@@ -42,6 +42,7 @@ Each concept type has a `normalize_*()` function that:
 3. properties keys MUST be snake_case
 4. New concept types MUST update schema/definitions.py
 5. New relationship types MUST update RelationshipType enum
+6. schema/definitions.py SHALL define TAG_LABELS and PROPERTY_DEFINITIONS for all 12 entity types
 
 ## Test Criteria
 - [ ] Each concept class sets correct labels

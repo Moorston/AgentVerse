@@ -25,6 +25,9 @@ External Source → BaseCrawler.crawl() → CrawlResult → Pipeline
 3. All crawlers MUST use RateLimiter
 4. Crawlers MUST NOT write to database (only return CrawlResult)
 5. Crawlers MUST NOT call LLM
+6. Worker `run_crawl()` SHALL dispatch all documented sources (arxiv, github, rss, semantic_scholar)
+7. `run_crawl()` SHALL catch exceptions from crawler instantiation and crawl execution, returning empty list on failure
+8. ArXiv API endpoint SHALL use HTTPS (`https://export.arxiv.org/api/query`)
 
 ## CrawlResult Schema
 ```python

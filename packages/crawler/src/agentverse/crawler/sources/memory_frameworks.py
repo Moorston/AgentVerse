@@ -10,6 +10,7 @@ import httpx
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -91,7 +92,7 @@ class MemoryFrameworkCrawler(BaseCrawler):
     def __init__(self, requests_per_second: float = 3.0) -> None:
         self._limiter = RateLimiter(requests_per_second=requests_per_second)
 
-    async def crawl(self, **kwargs) -> CrawlResult:
+    async def crawl(self, request: CrawlRequest | None = None) -> CrawlResult:
         """Fetch memory framework metadata.
 
         Returns structured data about each memory framework including

@@ -4,6 +4,7 @@ import pytest
 
 from agentverse.extractor.base import BaseExtractor, ExtractionResult
 from agentverse.extractor.pipeline import ExtractionPipeline
+from agentverse.extractor.types import ExtractionRequest
 
 
 class MockExtractor(BaseExtractor):
@@ -12,7 +13,7 @@ class MockExtractor(BaseExtractor):
     def __init__(self, entities: list[dict] | None = None):
         self._entities = entities or []
 
-    async def extract(self, text: str, **kwargs) -> ExtractionResult:
+    async def extract(self, request: ExtractionRequest) -> ExtractionResult:
         return ExtractionResult(source="mock", entities=self._entities)
 
 
@@ -20,7 +21,7 @@ class MockExtractor(BaseExtractor):
 async def test_pipeline_empty():
     """Empty pipeline should return empty results."""
     pipeline = ExtractionPipeline()
-    results = await pipeline.run_all("test text")
+    results = await pipeline.run_all({"text": "test text"})
     assert results == []
 
 
@@ -29,7 +30,7 @@ async def test_pipeline_single_extractor():
     """Pipeline should run registered extractor."""
     pipeline = ExtractionPipeline()
     pipeline.register(MockExtractor([{"name": "ReAct"}]))
-    results = await pipeline.run_all("some paper text")
+    results = await pipeline.run_all({"text": "some paper text"})
     assert len(results) == 1
     assert results[0].entities == [{"name": "ReAct"}]
 
@@ -40,5 +41,5 @@ async def test_pipeline_multiple_extractors():
     pipeline = ExtractionPipeline()
     pipeline.register(MockExtractor([{"name": "A"}]))
     pipeline.register(MockExtractor([{"name": "B"}]))
-    results = await pipeline.run_all("text")
+    results = await pipeline.run_all({"text": "text"})
     assert len(results) == 2

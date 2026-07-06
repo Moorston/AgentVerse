@@ -6,6 +6,7 @@ import httpx
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -21,16 +22,17 @@ class PapersWithCodeCrawler(BaseCrawler):
 
     async def crawl(
         self,
-        query: str = "AI agent",
-        max_results: int = 50,
-        **kwargs: Any,
+        request: CrawlRequest | None = None,
     ) -> CrawlResult:
         """Fetch papers from Papers with Code.
 
         Args:
-            query: Search query.
-            max_results: Maximum results.
+            request: Structured request with optional ``query`` and ``max_results``
+                fields.
         """
+        r: CrawlRequest = request or {}
+        query: str = r.get("query", "AI agent")
+        max_results: int = r.get("max_results", 50)
         items: list[dict[str, Any]] = []
         errors: list[str] = []
 

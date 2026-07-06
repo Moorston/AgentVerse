@@ -12,10 +12,18 @@ logger = get_logger(__name__)
 class LLMClient:
     """Unified LLM client supporting OpenAI and Claude."""
 
-    def __init__(self, provider: str = "openai", api_key: str = "", model: str = "") -> None:
+    def __init__(self, provider: str = "openai", api_key: str = "", model: str = "", base_url: str = "") -> None:
         self._provider = provider
-        self._api_key = api_key
-        self._model = model or self._default_model()
+        self._base_url = base_url
+
+        if not api_key or not model or not base_url:
+            settings = Settings()
+            self._api_key = api_key or settings.openai_api_key
+            self._base_url = base_url or settings.openai_base_url
+            self._model = model or settings.openai_model or self._default_model()
+        else:
+            self._api_key = api_key
+            self._model = model or self._default_model()
 
     def _default_model(self) -> str:
         return "gpt-4o" if self._provider == "openai" else "claude-sonnet-4-20250514"
@@ -70,7 +78,7 @@ class LLMClient:
         """Call OpenAI API."""
         from openai import AsyncOpenAI
 
-        client = AsyncOpenAI(api_key=self._api_key)
+        client = AsyncOpenAI(api_key=self._api_key, base_url=self._base_url or None)
         messages: list[dict[str, str]] = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})

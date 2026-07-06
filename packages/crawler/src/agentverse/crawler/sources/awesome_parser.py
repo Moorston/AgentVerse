@@ -5,6 +5,7 @@ from typing import Any
 from pathlib import Path
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -22,16 +23,17 @@ class AwesomeMarkdownParser(BaseCrawler):
 
     async def crawl(
         self,
-        repo: str = "",
-        readme_path: str = "README.md",
-        **kwargs: Any,
+        request: CrawlRequest | None = None,
     ) -> CrawlResult:
         """Parse a local Awesome repository's README.
 
         Args:
-            repo: Repository name (for labeling).
-            readme_path: Path to the README.md file.
+            request: Structured request. Uses ``query`` as the repository name
+                and ``search_query`` as the readme path (defaults to README.md).
         """
+        r: CrawlRequest = request or {}
+        repo: str = r.get("repo", "") or r.get("query", "")
+        readme_path: str = r.get("readme_path", "") or r.get("search_query", "") or "README.md"
         items: list[dict[str, Any]] = []
         errors: list[str] = []
 
@@ -110,6 +112,6 @@ def parse_local_readme(path: str, repo: str = "") -> list[dict[str, Any]]:
     # Use sync approach for local files
     import asyncio
     result = asyncio.get_event_loop().run_until_complete(
-        parser.crawl(repo=repo, readme_path=path)
+        parser.crawl({"repo": repo, "readme_path": path})
     )
     return result.items

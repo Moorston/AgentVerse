@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
+from agentverse.extractor.types import ExtractionRequest
+
 
 @dataclass
 class ExtractionResult:
@@ -17,5 +19,5 @@ class BaseExtractor(ABC):
     """Abstract base for all extractors."""
 
     @abstractmethod
-    async def extract(self, text: str, **kwargs) -> ExtractionResult:
+    async def extract(self, request: ExtractionRequest) -> ExtractionResult:
         """Extract structured information from text."""

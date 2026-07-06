@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
+from agentverse.crawler.types import CrawlRequest
+
 
 @dataclass
 class CrawlResult:
@@ -17,5 +19,9 @@ class BaseCrawler(ABC):
     """Abstract base for all crawlers."""
 
     @abstractmethod
-    async def crawl(self, **kwargs) -> CrawlResult:
-        """Execute a crawl and return results."""
+    async def crawl(self, request: CrawlRequest | None = None) -> CrawlResult:
+        """Execute a crawl and return results.
+
+        Args:
+            request: Structured request parameters.
+        """

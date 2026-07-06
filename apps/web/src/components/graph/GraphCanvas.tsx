@@ -7,6 +7,10 @@ import type { GraphData } from "@/types/graph";
 interface GraphCanvasProps {
   data: GraphData;
   onNodeClick?: (nodeId: string) => void;
+  onNodeDoubleClick?: (nodeId: string) => void;
+  filterType?: string[];
+  edgeFilter?: string[];
+  highlightNode?: string;
   className?: string;
 }
 
@@ -23,7 +27,15 @@ const NODE_COLORS: Record<string, string> = {
   Pattern: "#f97316",
 };
 
-export function GraphCanvas({ data, onNodeClick, className }: GraphCanvasProps) {
+export function GraphCanvas({
+  data,
+  onNodeClick,
+  onNodeDoubleClick,
+  filterType,
+  edgeFilter,
+  highlightNode,
+  className,
+}: GraphCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
 
@@ -34,12 +46,12 @@ export function GraphCanvas({ data, onNodeClick, className }: GraphCanvasProps) 
     return "#6b7280";
   }, []);
 
+  // ── Initialise Cytoscape instance ─────────────────────────────
   useEffect(() => {
     if (!containerRef.current) return;
 
     const elements: cytoscape.ElementDefinition[] = [];
 
-    // Add nodes
     for (const node of data.nodes) {
       elements.push({
         group: "nodes",
@@ -52,7 +64,6 @@ export function GraphCanvas({ data, onNodeClick, className }: GraphCanvasProps) 
       });
     }
 
-    // Add edges
     for (const edge of data.edges) {
       elements.push({
         group: "edges",
@@ -111,19 +122,148 @@ export function GraphCanvas({ data, onNodeClick, className }: GraphCanvasProps) 
       maxZoom: 3,
     });
 
-    // Handle node click
-    cy.on("tap", "node", (event) => {
-      const nodeId = event.target.id();
-      onNodeClick?.(nodeId);
-    });
-
     cyRef.current = cy;
 
     return () => {
       cy.destroy();
       cyRef.current = null;
     };
-  }, [data, getNodeColor, onNodeClick]);
+  }, [data, getNodeColor]);
+
+  // ── Single-tap / double-tap detection ─────────────────────────
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    let lastTapTime = 0;
+    let singleTapTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const onTapNode = (event: cytoscape.EventObject) => {
+      const nodeId = event.target.id();
+      const now = Date.now();
+
+      if (now - lastTapTime < 300) {
+        // Double-tap detected
+        if (singleTapTimer !== null) {
+          clearTimeout(singleTapTimer);
+          singleTapTimer = null;
+        }
+        onNodeDoubleClick?.(nodeId);
+        lastTapTime = 0;
+      } else {
+        lastTapTime = now;
+        singleTapTimer = setTimeout(() => {
+          onNodeClick?.(nodeId);
+          singleTapTimer = null;
+        }, 300);
+      }
+    };
+
+    cy.on("tap", "node", onTapNode);
+
+    return () => {
+      cy.off("tap", "node", onTapNode);
+      if (singleTapTimer !== null) {
+        clearTimeout(singleTapTimer);
+      }
+    };
+  }, [onNodeClick, onNodeDoubleClick]);
+
+  // ── Filter nodes by type ───────────────────────────────────────
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    if (!filterType || filterType.length === 0) {
+      cy.nodes().show();
+      cy.edges().show();
+    } else {
+      cy.nodes().forEach((node) => {
+        const nodeType = node.data("type");
+        if (filterType.includes(nodeType)) {
+          node.show();
+        } else {
+          node.hide();
+        }
+      });
+      // Only show edges connecting two visible nodes
+      cy.edges().forEach((edge) => {
+        if (edge.source().visible() && edge.target().visible()) {
+          edge.show();
+        } else {
+          edge.hide();
+        }
+      });
+    }
+  }, [filterType]);
+
+  // ── Filter edges by relationship type ──────────────────────────
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    if (!edgeFilter || edgeFilter.length === 0) {
+      cy.edges().forEach((edge) => {
+        edge.style({ opacity: 1 });
+      });
+    } else {
+      cy.edges().forEach((edge) => {
+        const edgeType = edge.data("label");
+        if (edgeFilter.includes(edgeType)) {
+          edge.style({ opacity: 1 });
+        } else {
+          edge.style({ opacity: 0 });
+        }
+      });
+    }
+  }, [edgeFilter]);
+
+  // ── Highlight node and its 1-hop neighbours ────────────────────
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    // Reset to defaults
+    cy.nodes().style({
+      opacity: 1,
+      "border-width": 2,
+      "border-color": "#fff",
+    });
+    cy.edges().style({
+      opacity: 1,
+      width: 2,
+    });
+
+    if (!highlightNode) return;
+
+    const targetNode = cy.getElementById(highlightNode);
+    if (targetNode.length === 0) return;
+
+    const neighbors = targetNode.neighborhood().nodes();
+    const allRelated = targetNode.add(neighbors);
+
+    // Dim everything outside the 1-hop neighbourhood
+    cy.nodes().not(allRelated).style({ opacity: 0.15 });
+    cy.edges().forEach((edge) => {
+      const src = edge.source();
+      const tgt = edge.target();
+      if (!allRelated.contains(src) || !allRelated.contains(tgt)) {
+        edge.style({ opacity: 0.1 });
+      }
+    });
+
+    // Highlight the target node (gold border)
+    targetNode.style({
+      "border-width": 4,
+      "border-color": "#ffd700",
+    });
+
+    // Highlight 1-hop neighbours (orange border)
+    neighbors.style({
+      "border-width": 3,
+      "border-color": "#ffa500",
+    });
+  }, [highlightNode]);
 
   return (
     <div

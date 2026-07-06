@@ -8,6 +8,7 @@ from agentverse.graphrag.embeddings.models import OpenAIEmbeddingModel
 from agentverse.graphrag.indexing.pipeline import IndexingPipeline
 from agentverse.graphrag.retrieval.graph import GraphSearch
 from agentverse.graphrag.retrieval.hybrid import HybridSearch
+from agentverse.graphrag.retrieval.pgvector_store import PgVectorStore
 from agentverse.graphrag.retrieval.vector import VectorSearch
 from agentverse.shared.config import Settings
 from agentverse.shared.logging import get_logger
@@ -26,6 +27,7 @@ class GraphRAGEngine:
         self._settings = settings or Settings()
         self._client = GraphClient(self._settings)
         self._embedding_model: BaseEmbeddingModel | None = None
+        self._vector_store: PgVectorStore | None = None
         self._vector_search: VectorSearch | None = None
         self._graph_search: GraphSearch | None = None
         self._hybrid_search: HybridSearch | None = None
@@ -48,9 +50,16 @@ class GraphRAGEngine:
         )
 
         # Vector search (pgvector)
+        self._vector_store = PgVectorStore(dsn=self._settings.postgres_dsn, vector_dim=self._settings.embedding_dimension)
+        try:
+            await self._vector_store.connect()
+            logger.info("PgVectorStore connected")
+        except Exception as exc:
+            logger.warning("PgVectorStore not available", error=str(exc))
+
         self._vector_search = VectorSearch(
             embedding_model=self._embedding_model,
-            dsn=self._settings.postgres_dsn,
+            store=self._vector_store,
         )
         await self._vector_search.initialize()
 
@@ -61,15 +70,17 @@ class GraphRAGEngine:
         self._hybrid_search = HybridSearch(self._vector_search, self._graph_search)
 
         # Indexing pipeline
-        self._indexing_pipeline = IndexingPipeline(self._embedding_model, self._client)
+        self._indexing_pipeline = IndexingPipeline(
+            self._embedding_model, self._client, vector_store=self._vector_store
+        )
 
         logger.info("GraphRAG engine initialized")
 
     async def close(self) -> None:
         """Close all connections."""
         await self._client.close()
-        if self._vector_search and self._vector_search._store:
-            await self._vector_search._store.close()
+        if self._vector_store:
+            await self._vector_store.close()
         logger.info("GraphRAG engine closed")
 
     async def query(

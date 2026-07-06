@@ -6,8 +6,12 @@ const NAV_ITEMS = [
   { label: "Home", href: "/", icon: "🏠" },
   { label: "Graph", href: "/graph", icon: "🔮" },
   { label: "Search", href: "/search", icon: "🔍" },
+  { label: "Papers", href: "/papers", icon: "📄" },
   { label: "Frameworks", href: "/frameworks", icon: "🧩" },
+  { label: "Compare", href: "/compare", icon: "⚖️" },
   { label: "Timeline", href: "/timeline", icon: "📈" },
+  { label: "Roadmap", href: "/roadmap", icon: "🗺️" },
+  { label: "Monitor", href: "/monitor", icon: "📊" },
 ];
 
 export function Sidebar() {

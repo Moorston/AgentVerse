@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const FEATURES = [
@@ -38,7 +41,51 @@ const STATS = [
   { value: "11", label: "API Endpoints", color: "text-orange-600" },
 ];
 
+interface GraphNode {
+  id: string;
+  label: string;
+  type: string;
+}
+
+interface GraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+}
+
 export default function Home() {
+  const [stats, setStats] = useState(STATS);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadStats() {
+      try {
+        const res = await fetch("/data/knowledge_graph.json");
+        if (res.ok && !cancelled) {
+          const json = await res.json();
+          const nodes: GraphNode[] = json.nodes || [];
+          const edges: GraphEdge[] = json.edges || [];
+          const nodeTypes = new Set(nodes.map((n) => n.type)).size;
+          const relTypes = new Set(edges.map((e) => e.type)).size;
+          setStats([
+            { value: String(nodes.length), label: "Total Nodes", color: "text-blue-600" },
+            { value: String(edges.length), label: "Total Edges", color: "text-green-600" },
+            { value: String(nodeTypes), label: "Node Types", color: "text-purple-600" },
+            { value: String(relTypes), label: "Relationship Types", color: "text-orange-600" },
+          ]);
+        }
+      } catch {
+        // Keep hardcoded STATS as fallback
+      } finally {
+        if (!cancelled) setStatsLoading(false);
+      }
+    }
+    loadStats();
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
@@ -93,9 +140,11 @@ export default function Home() {
       {/* Stats */}
       <section className="max-w-3xl mx-auto px-8 pb-20">
         <div className="grid grid-cols-4 gap-8 text-center">
-          {STATS.map((stat) => (
+          {stats.map((stat) => (
             <div key={stat.label}>
-              <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
+              <div className={`text-3xl font-bold ${stat.color}`}>
+                {statsLoading ? "..." : stat.value}
+              </div>
               <div className="text-sm text-gray-500">{stat.label}</div>
             </div>
           ))}

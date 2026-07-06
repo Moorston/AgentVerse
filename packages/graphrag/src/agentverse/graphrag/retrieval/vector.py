@@ -11,21 +11,19 @@ logger = get_logger(__name__)
 class VectorSearch:
     """Vector similarity search using pgvector."""
 
-    def __init__(self, embedding_model: BaseEmbeddingModel, dsn: str = "") -> None:
+    def __init__(self, embedding_model: BaseEmbeddingModel, store: Any = None) -> None:
         self._embedding_model = embedding_model
-        self._dsn = dsn
-        self._store: Any = None
+        self._store = store
 
     async def initialize(self) -> None:
-        """Initialize the vector store connection."""
-        try:
-            from agentverse.api.db.postgres import VectorStore
-            self._store = VectorStore(dsn=self._dsn, dimension=1536)
-            await self._store.connect()
+        """Verify the vector store connection is ready.
+
+        The store is injected via constructor — this method just logs its state.
+        """
+        if self._store:
             logger.info("VectorSearch initialized with pgvector")
-        except Exception as exc:
-            logger.warning("VectorSearch pgvector not available", error=str(exc))
-            self._store = None
+        else:
+            logger.warning("VectorSearch has no store — search will return empty results")
 
     async def search(self, query: str, top_k: int = 10) -> list[dict[str, Any]]:
         """Search for semantically similar content.
@@ -60,6 +58,6 @@ class VectorSearch:
         """
         embedding = await self._embedding_model.embed(content)
         if self._store:
-            await self._store.upsert(node_id, label, content, embedding)
+            await self._store.upsert(node_id, embedding, content, metadata={"label": label})
             logger.debug("Indexed node", node_id=node_id, dim=len(embedding))
         return embedding

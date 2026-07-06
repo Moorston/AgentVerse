@@ -12,9 +12,15 @@ logger = get_logger(__name__)
 class IndexingPipeline:
     """Pipeline for processing nodes into pgvector embeddings."""
 
-    def __init__(self, embedding_model: BaseEmbeddingModel, graph_client: GraphClient) -> None:
+    def __init__(
+        self,
+        embedding_model: BaseEmbeddingModel,
+        graph_client: GraphClient,
+        vector_store: Any | None = None,
+    ) -> None:
         self._embedding_model = embedding_model
         self._graph_client = graph_client
+        self._vector_store = vector_store
 
     async def run(self, labels: list[str] | None = None, batch_size: int = 50) -> int:
         """Index all nodes of given labels into pgvector.
@@ -41,15 +47,15 @@ class IndexingPipeline:
 
     async def _index_label(self, label: str, batch_size: int) -> int:
         """Index all nodes of a given label."""
-        # Fetch all nodes of this label
         nodes = await self._graph_client.execute(
-            f"MATCH (n:{label}) RETURN elementId(n) AS id, n.name AS name, n.description AS description LIMIT 1000"
+            f"MATCH (n:{label}) "
+            f"RETURN elementId(n) AS id, n.name AS name, n.description AS description "
+            f"LIMIT 1000"
         )
 
         if not nodes:
             return 0
 
-        # Prepare content for embedding
         contents: list[str] = []
         node_ids: list[str] = []
         for node in nodes:
@@ -60,7 +66,6 @@ class IndexingPipeline:
                 contents.append(content)
                 node_ids.append(node["id"])
 
-        # Batch embed
         indexed = 0
         for i in range(0, len(contents), batch_size):
             batch_contents = contents[i:i + batch_size]
@@ -69,15 +74,19 @@ class IndexingPipeline:
             try:
                 embeddings = await self._embedding_model.embed_batch(batch_contents)
 
-                # Write to pgvector via VectorStore
-                # TODO: Wire up actual VectorStore connection
-                # For now, log the indexing action
-                for node_id, content, embedding in zip(batch_ids, batch_contents, embeddings):
+                if self._vector_store:
+                    for node_id, content, embedding in zip(batch_ids, batch_contents, embeddings):
+                        await self._vector_store.upsert(
+                            id=node_id,
+                            embedding=list(embedding),
+                            content=content,
+                            metadata={"label": label},
+                        )
+                else:
                     logger.debug(
-                        "Would index to pgvector",
-                        node_id=node_id,
-                        content_preview=content[:50],
-                        embedding_dim=len(embedding),
+                        "No vector store — skipping write",
+                        label=label,
+                        count=len(embeddings),
                     )
 
                 indexed += len(embeddings)

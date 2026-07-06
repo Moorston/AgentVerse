@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -22,12 +23,18 @@ class WebCrawler(BaseCrawler):
     def __init__(self, requests_per_second: float = 2.0) -> None:
         self._limiter = RateLimiter(requests_per_second=requests_per_second)
 
-    async def crawl(self, url: str = "", **kwargs) -> CrawlResult:
+    async def crawl(
+        self,
+        request: CrawlRequest | None = None,
+    ) -> CrawlResult:
         """Fetch and parse a web page.
 
         Args:
-            url: URL to crawl.
+            request: Structured request. Uses ``query`` as the URL to crawl.
+                Accepts ``url`` as an alias for ``query``.
         """
+        r: CrawlRequest = request or {}
+        url: str = r.get("url", "") or r.get("query", "")
         if not url:
             return CrawlResult(source="web", items=[], errors=["No URL provided"])
 

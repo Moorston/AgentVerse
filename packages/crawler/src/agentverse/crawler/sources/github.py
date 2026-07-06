@@ -2,10 +2,13 @@
 
 from typing import Any
 
+from agentverse.crawler.types import RepoDict
+
 import httpx
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -38,16 +41,17 @@ class GitHubCrawler(BaseCrawler):
 
     async def crawl(
         self,
-        repos: list[str] | None = None,
-        query: str = "",
-        **kwargs: Any,
+        request: CrawlRequest | None = None,
     ) -> CrawlResult:
         """Fetch repository metadata from GitHub API.
 
         Args:
-            repos: List of "owner/repo" strings (default: DEFAULT_REPOS).
-            query: GitHub search query (used if repos is empty).
+            request: Structured request with optional ``query`` and ``max_results``
+                fields. Also accepts ``repos`` in the request dict.
         """
+        r: CrawlRequest = request or {}
+        repos: list[str] | None = r.get("repos")  # type: ignore[assignment]
+        query: str = r.get("query", "")
         target_repos = repos or DEFAULT_REPOS
         items: list[dict[str, Any]] = []
         errors: list[str] = []
@@ -77,7 +81,7 @@ class GitHubCrawler(BaseCrawler):
         logger.info("GitHub crawl complete", repos=len(items), errors=len(errors))
         return CrawlResult(source="github", items=items, errors=errors)
 
-    async def _fetch_repo(self, repo: str, headers: dict[str, str]) -> dict[str, Any] | None:
+    async def _fetch_repo(self, repo: str, headers: dict[str, str]) -> RepoDict | None:
         """Fetch metadata for a single repository."""
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.get(f"{GITHUB_API_URL}/repos/{repo}", headers=headers)
@@ -100,7 +104,7 @@ class GitHubCrawler(BaseCrawler):
                 "homepage": data.get("homepage", ""),
             }
 
-    async def _search_repos(self, query: str, headers: dict[str, str]) -> list[dict[str, Any]]:
+    async def _search_repos(self, query: str, headers: dict[str, str]) -> list[RepoDict]:
         """Search GitHub repositories."""
         async with httpx.AsyncClient(timeout=30) as client:
             response = await client.get(

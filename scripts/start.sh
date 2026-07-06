@@ -6,8 +6,14 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PYTHON=".venv/Scripts/python.exe"
 CMD="${1:-all}"
+
+# Platform-aware Python path
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OSTYPE" == "win32" ]]; then
+    PYTHON=".venv/Scripts/python.exe"
+else
+    PYTHON=".venv/bin/python"
+fi
 
 # Colors
 GREEN='\033[0;32m'

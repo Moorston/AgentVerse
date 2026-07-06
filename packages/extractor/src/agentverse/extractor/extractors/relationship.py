@@ -3,6 +3,7 @@
 from agentverse.extractor.base import BaseExtractor, ExtractionResult
 from agentverse.extractor.llm.client import LLMClient
 from agentverse.extractor.llm.prompts import RELATIONSHIP_EXTRACTION_PROMPT
+from agentverse.extractor.types import ExtractionRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -14,14 +15,24 @@ VALID_RELATIONSHIP_TYPES = [
 ]
 
 SYSTEM_PROMPT = f"""You are an AI research relationship analyst. Extract relationships between concepts.
-Valid relationship types: {', '.join(VALID_RELATIONSHIP_TYPES)}
+
+STRICT RULES:
+1. Valid relationship types: {', '.join(VALID_RELATIONSHIP_TYPES)}
+2. source = the method/framework/technique that acts (the one proposing, implementing, or extending)
+3. target = the entity being affected, supported, or extended
+4. ALL concept names MUST be PascalCase (e.g., ChainOfThought, not chain-of-thought)
+5. Do NOT include generic terms as source or target: "LLMs", "AI", "models", "data"
+6. Do NOT reverse directions: "A extends B" means source=A, target=B
+
+GOOD: source="ReAct", target="ChainOfThought", type="EXTENDS"
+BAD: source="alignment training", target="LLMs", type="SUPPORTS"
 
 Return valid JSON:
 {{
   "relationships": [
     {{
-      "source": "source concept name",
-      "target": "target concept name",
+      "source": "PascalCaseSourceName",
+      "target": "PascalCaseTargetName",
       "type": "one of the valid types above",
       "evidence": "brief evidence from the text"
     }}
@@ -35,8 +46,9 @@ class RelationshipExtractor(BaseExtractor):
     def __init__(self, llm_client: LLMClient | None = None) -> None:
         self._client = llm_client or LLMClient()
 
-    async def extract(self, text: str, **kwargs) -> ExtractionResult:
+    async def extract(self, request: ExtractionRequest) -> ExtractionResult:
         """Extract relationships from text."""
+        text = request.get("text", "")
         prompt = RELATIONSHIP_EXTRACTION_PROMPT.format(text=text)
 
         try:

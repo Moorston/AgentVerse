@@ -1,0 +1,1066 @@
+{
+  "nodes": [
+    {
+      "id": "DistributedAttacksInPersistentstateAiControl",
+      "type": "paper",
+      "name": "Distributed Attacks in Persistent-State AI Control",
+      "description": "As AI coding agents become more autonomous, they increasingly ship code iteratively, with the codebase persisting across sessions. This persistence creates a new attack surface: a misaligned or prompt",
+      "authors": [
+        "Josh Hills",
+        "Ida Caspary",
+        "Asa Cooper Stickland"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02514v1",
+      "categories": [
+        "cs.AI"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "LacunaATestbedForEvaluatingLocalizationPrecisionForLlmUnlearning",
+      "type": "paper",
+      "name": "LACUNA: A Testbed for Evaluating Localization Precision for LLM Unlearning",
+      "description": "LLMs memorize sensitive training data, including personally identifiable information (PII), creating a pressing need for reliable post hoc removal methods. Unlearning has emerged as a promising soluti",
+      "authors": [
+        "Matteo Boglioni",
+        "Thibault Rousset",
+        "Siva Reddy",
+        "Marius Mosbach",
+        "Verna Dankers"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02513v1",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "ProgramasweightsAProgrammingParadigmForFuzzyFunctions",
+      "type": "paper",
+      "name": "Program-as-Weights: A Programming Paradigm for Fuzzy Functions",
+      "description": "Many everyday programming tasks resist clean rule-based implementation, such as alerting on important log lines, repairing malformed JSON, or ranking search results by intent, and are increasingly out",
+      "authors": [
+        "Wentao Zhang",
+        "Liliana Hotsko",
+        "Woojeong Kim",
+        "Pengyu Nie",
+        "Stuart Shieber",
+        "Yuntian Deng"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02512v1",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "OnlineSafetyMonitoringForLlms",
+      "type": "paper",
+      "name": "Online Safety Monitoring for LLMs",
+      "description": "Despite alignment training, LLMs remain prone to generating unsafe outputs at deployment time. Monitoring outputs online and raising an alarm when safety can no longer be assumed is therefore critical",
+      "authors": [
+        "Mona Schirmer",
+        "Metod Jazbec",
+        "Alexander Timans",
+        "Christian Naesseth",
+        "Maja Waldron",
+        "Eric Nalisnick"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02510v1",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.LG",
+        "stat.AP",
+        "stat.ML"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "RecontextRecursiveEvidenceReplayAsLlmHarnessForLongcontextReasoning",
+      "type": "paper",
+      "name": "ReContext: Recursive Evidence Replay as LLM Harness for Long-Context Reasoning",
+      "description": "Understanding and reasoning over long contexts has become a key requirement for deploying large language models (LLMs) in realistic applications. Although recent LLMs support increasingly long context",
+      "authors": [
+        "Yanjun Zhao",
+        "Ruizhong Qiu",
+        "Tianxin Wei",
+        "Yuanchen Bei",
+        "Zhining Liu",
+        "Lingjie Chen",
+        "Ismini Lourentzou",
+        "Hanghang Tong",
+        "Jingrui He"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02509v1",
+      "categories": [
+        "cs.AI"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "WhatLlmAgentsSayWhenNoOneIsWatchingSocialStructureAndLatentObjectiveEmergenceInMultiagentDebates",
+      "type": "paper",
+      "name": "What LLM Agents Say When No One Is Watching: Social Structure and Latent Objective Emergence in Multi-Agent Debates",
+      "description": "LLM agents will increasingly act in socially structured settings where role, audience, and relational context can shape what is advantageous or costly to say. We study whether such social structure, w",
+      "authors": [
+        "Arman Ghaffarizadeh",
+        "Danyal Mohaddes",
+        "Aliakbar Izadkhah",
+        "Shahriar Noroozizadeh"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02507v1",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "ReasoningLlmImprovesSpeakerRecognitionInLongformTvDramas",
+      "type": "paper",
+      "name": "Reasoning LLM Improves Speaker Recognition in Long-form TV Dramas",
+      "description": "Long-form TV dramas present a formidable challenge for comprehensive video understanding, where deciphering complex storyline often relies on \\textbf{speaker recognition}, the task of accurately attri",
+      "authors": [
+        "Yuxuan Li",
+        "Lingxi Xie",
+        "Xinyue Huo",
+        "Jihao Qiu",
+        "Jiacheng Shao",
+        "Pengfei Chen",
+        "Jiannan Ge",
+        "Kaiwen Duan",
+        "Qi Tian"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02504v1",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "DemopsdDisagreementmodulatedPolicySelfdistillation",
+      "type": "paper",
+      "name": "DemoPSD: Disagreement-Modulated Policy Self-Distillation",
+      "description": "On-policy self-distillation (OPSD) has emerged as a practical method for training large language models (LLMs) to reason, where a single model acts as both the teacher and the student with different l",
+      "authors": [
+        "Yunhe Li",
+        "Hao Shi",
+        "Wenhao Liu",
+        "Mengzhe Ruan",
+        "Hanxu Hou",
+        "Zhongxiang Dai",
+        "Shuang Qiu",
+        "Linqi Song"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02502v1",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "BeyondAdamSoapAndMuonForFasterLabelefficientTrainingOfMachineLearningInteratomicPotentials",
+      "type": "paper",
+      "name": "Beyond Adam: SOAP and Muon for Faster, Label-Efficient Training of Machine Learning Interatomic Potentials",
+      "description": "Machine learning interatomic potentials (MLIPs) have become a hallmark of AI for scientific simulation. While efforts on new architectures and datasets have led to increasingly accurate and general mo",
+      "authors": [
+        "Gil Harari",
+        "Yoel Zimmermann",
+        "Ola Tangen Kulseng",
+        "Laura Zichi",
+        "Chuin Wei Tan",
+        "Marc L. Descoteaux",
+        "Boris Kozinsky"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02499v1",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "ControllableSimAgentsWithBehaviorLatents",
+      "type": "paper",
+      "name": "Controllable Sim Agents with Behavior Latents",
+      "description": "Realistic traffic simulation requires agents that imitate logged behavior and can also be steered along interpretable axes. Such controllability enables engineers to isolate variables, reproduce speci",
+      "authors": [
+        "Juanwu Lu",
+        "Junyu Zhu",
+        "Ziran Wang"
+      ],
+      "published_date": "2026-07-02",
+      "arxiv_id": "2607.02496v1",
+      "categories": [
+        "cs.RO",
+        "cs.LG"
+      ],
+      "sources": [
+        "arxiv"
+      ]
+    },
+    {
+      "id": "Mem0",
+      "type": "memory_framework",
+      "name": "Mem0",
+      "description": "Production-ready long-term memory for AI agents. Supports graph memory, personalized memory, and cross-session persistence.",
+      "github_url": "https://github.com/mem0ai/mem0",
+      "stars": 60195,
+      "memory_categories": [
+        "long_term",
+        "graph",
+        "personalized"
+      ],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "Zep",
+      "type": "memory_framework",
+      "name": "Zep",
+      "description": "Temporal memory framework for conversational agents. Focuses on fact extraction, content summarization, and temporal reasoning.",
+      "github_url": "https://github.com/getzep/zep",
+      "stars": 4731,
+      "memory_categories": [
+        "temporal",
+        "episodic",
+        "fact_extraction"
+      ],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "LangMem",
+      "type": "memory_framework",
+      "name": "LangMem",
+      "description": "LangChain native memory components for agents. Supports event memory, fact/preference memory, and procedural memory with hot-path and background updates.",
+      "github_url": "https://github.com/langchain-ai/langmem",
+      "stars": 1541,
+      "memory_categories": [
+        "event",
+        "semantic",
+        "procedural"
+      ],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "Letta",
+      "type": "memory_framework",
+      "name": "Letta",
+      "description": "Long-running agent framework with persistent state management. Designed for ultra-long-running agents.",
+      "github_url": "https://github.com/letta-ai/letta",
+      "stars": 23664,
+      "memory_categories": [
+        "persistent_state",
+        "long_term"
+      ],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "Cognee",
+      "type": "memory_framework",
+      "name": "Cognee",
+      "description": "Knowledge graph-based memory. Structures memory as a knowledge graph for complex relationship reasoning.",
+      "github_url": "https://github.com/topoteretes/cognee",
+      "stars": 27201,
+      "memory_categories": [
+        "graph",
+        "semantic",
+        "relationship"
+      ],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "ShorttermMemory",
+      "type": "memory_type",
+      "name": "Short-term Memory",
+      "description": "Context window and working memory for the current task. Limited by model context length.",
+      "github_url": "",
+      "stars": 0,
+      "memory_categories": [],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "LongtermMemory",
+      "type": "memory_type",
+      "name": "Long-term Memory",
+      "description": "Persistent memory that survives across sessions and tasks. Stored in external databases.",
+      "github_url": "",
+      "stars": 0,
+      "memory_categories": [],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "EpisodicMemory",
+      "type": "memory_type",
+      "name": "Episodic Memory",
+      "description": "Memory of specific past experiences and interactions. Records what happened, when, and where.",
+      "github_url": "",
+      "stars": 0,
+      "memory_categories": [],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "SemanticMemory",
+      "type": "memory_type",
+      "name": "Semantic Memory",
+      "description": "Factual knowledge and concept relationships. General world knowledge independent of specific episodes.",
+      "github_url": "",
+      "stars": 0,
+      "memory_categories": [],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "ProceduralMemory",
+      "type": "memory_type",
+      "name": "Procedural Memory",
+      "description": "Memory of how to perform tasks and procedures. Encodes skills and step-by-step processes.",
+      "github_url": "",
+      "stars": 0,
+      "memory_categories": [],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "GraphMemory",
+      "type": "memory_type",
+      "name": "Graph Memory",
+      "description": "Knowledge graph-based memory structure. Stores entities and relationships as an interconnected graph.",
+      "github_url": "",
+      "stars": 0,
+      "memory_categories": [],
+      "sources": [
+        "memory_frameworks"
+      ]
+    },
+    {
+      "id": "Langchainailanggraph",
+      "type": "framework",
+      "name": "langchain-ai/langgraph",
+      "description": "Build resilient agents.",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "agents",
+        "ai",
+        "ai-agents",
+        "chatgpt",
+        "deepagents",
+        "enterprise",
+        "framework",
+        "gemini",
+        "generative-ai",
+        "langchain",
+        "langgraph",
+        "llm",
+        "multiagent",
+        "open-source",
+        "openai",
+        "pydantic",
+        "python",
+        "rag"
+      ],
+      "updated_at": "2026-07-06T11:08:18Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Crewaiinccrewai",
+      "type": "framework",
+      "name": "crewAIInc/crewAI",
+      "description": "Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "agents",
+        "ai",
+        "ai-agents",
+        "aiagentframework",
+        "llms"
+      ],
+      "updated_at": "2026-07-06T11:08:27Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Microsoftautogen",
+      "type": "framework",
+      "name": "microsoft/autogen",
+      "description": "A programming framework for agentic AI",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "agentic",
+        "agentic-agi",
+        "agents",
+        "ai",
+        "autogen",
+        "autogen-ecosystem",
+        "chatgpt",
+        "framework",
+        "llm-agent",
+        "llm-framework"
+      ],
+      "updated_at": "2026-07-06T10:09:05Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Runllamallamaindex",
+      "type": "framework",
+      "name": "run-llama/llama_index",
+      "description": "LlamaIndex is the leading document agent and OCR platform",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "agents",
+        "application",
+        "data",
+        "fine-tuning",
+        "framework",
+        "llamaindex",
+        "llm",
+        "multi-agents",
+        "rag",
+        "vector-database"
+      ],
+      "updated_at": "2026-07-06T09:55:28Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Microsoftsemantickernel",
+      "type": "framework",
+      "name": "microsoft/semantic-kernel",
+      "description": "Integrate cutting-edge LLM technology quickly and easily into your apps",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "C#",
+      "topics": [
+        "ai",
+        "artificial-intelligence",
+        "llm",
+        "openai",
+        "sdk"
+      ],
+      "updated_at": "2026-07-06T09:18:45Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Langgeniusdify",
+      "type": "framework",
+      "name": "langgenius/dify",
+      "description": "Production-ready platform for agentic workflow development.",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "TypeScript",
+      "topics": [
+        "agent",
+        "agentic-ai",
+        "agentic-framework",
+        "agentic-workflow",
+        "ai",
+        "automation",
+        "gemini",
+        "genai",
+        "gpt",
+        "gpt-4",
+        "llm",
+        "low-code",
+        "mcp",
+        "nextjs",
+        "no-code",
+        "openai",
+        "orchestration",
+        "python",
+        "rag",
+        "workflow"
+      ],
+      "updated_at": "2026-07-06T10:55:28Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Openaiswarm",
+      "type": "framework",
+      "name": "openai/swarm",
+      "description": "Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team.",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [],
+      "updated_at": "2026-07-06T04:34:04Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Mem0aimem0",
+      "type": "framework",
+      "name": "mem0ai/mem0",
+      "description": "Universal memory layer for AI Agents",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "agents",
+        "ai",
+        "ai-agents",
+        "application",
+        "chatbots",
+        "chatgpt",
+        "genai",
+        "llm",
+        "long-term-memory",
+        "memory",
+        "memory-management",
+        "python",
+        "rag",
+        "state-management"
+      ],
+      "updated_at": "2026-07-06T10:38:20Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Getzepzep",
+      "type": "framework",
+      "name": "getzep/zep",
+      "description": "Zep | Examples, Integrations, & More",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "ai",
+        "knowledge-graphs",
+        "language-model",
+        "llm"
+      ],
+      "updated_at": "2026-07-06T09:38:54Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Langchainailangmem",
+      "type": "framework",
+      "name": "langchain-ai/langmem",
+      "description": null,
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [],
+      "updated_at": "2026-07-06T04:55:34Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Lettaailetta",
+      "type": "framework",
+      "name": "letta-ai/letta",
+      "description": "Platform for stateful agents: AI with advanced memory that can learn and self-improve over time.",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "ai",
+        "ai-agents",
+        "llm",
+        "llm-agent"
+      ],
+      "updated_at": "2026-07-06T10:33:16Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "Topoteretescognee",
+      "type": "framework",
+      "name": "topoteretes/cognee",
+      "description": "Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory across sessions with a self-hosted knowledge graph engine.",
+      "github_url": "",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": [
+        "agent-memory",
+        "agent-skills",
+        "ai",
+        "ai-agents",
+        "ai-memory",
+        "cognitive-architecture",
+        "cognitive-memory",
+        "context-engineering",
+        "contributions-welcome",
+        "good-first-issue",
+        "good-first-pr",
+        "graph-database",
+        "graph-rag",
+        "help-wanted",
+        "knowledge",
+        "knowledge-graph",
+        "memory-management",
+        "open-source",
+        "vector-database"
+      ],
+      "updated_at": "2026-07-06T11:12:38Z",
+      "sources": [
+        "github"
+      ]
+    },
+    {
+      "id": "IterativeVibeCoding",
+      "type": "concept",
+      "name": "IterativeVibeCoding",
+      "description": "A setting for AI control where a coding agent builds software over a sequence of pull requests in a persistent codebase while pursuing a covert side task.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "StatefulLinkTracker",
+      "type": "concept",
+      "name": "StatefulLinkTracker",
+      "description": "A monitor that tracks suspicious buildup across pull requests to detect gradual attacks.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "TrajectoryMonitor",
+      "type": "concept",
+      "name": "TrajectoryMonitor",
+      "description": "A monitor that evaluates the sequence of actions or steps taken by an agent.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "DiffMonitor",
+      "type": "concept",
+      "name": "DiffMonitor",
+      "description": "A monitor that evaluates code changes by looking at the accumulated history of diffs.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "MonitorEnsemble",
+      "type": "concept",
+      "name": "MonitorEnsemble",
+      "description": "A defensive strategy combining multiple monitors, such as trajectory and diff monitors, to reduce attack evasion.",
+      "category": "multi_agent",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "MachineUnlearning",
+      "type": "concept",
+      "name": "MachineUnlearning",
+      "description": "A technique used to remove specific sensitive training data or knowledge from a model's parameters.",
+      "category": "memory",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "LocalizeFirstUnlearnSecond",
+      "type": "concept",
+      "name": "LocalizeFirstUnlearnSecond",
+      "description": "A paradigm that first identifies the specific model parameters responsible for storing targeted knowledge before applying unlearning methods to them.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "Lacuna",
+      "type": "concept",
+      "name": "Lacuna",
+      "description": "An unlearning testbed framework that provides ground-truth parameter-level localization to evaluate if unlearning truly erases knowledge.",
+      "category": "protocol",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "MaskedContinualPretraining",
+      "type": "concept",
+      "name": "MaskedContinualPretraining",
+      "description": "A method used to inject specific synthetic information into predefined parameters of a model for evaluation purposes.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "GradientBasedUnlearning",
+      "type": "concept",
+      "name": "GradientBasedUnlearning",
+      "description": "A technique that utilizes gradients to effectively erase specific knowledge from model weights when localization is successful.",
+      "category": "memory",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "FuzzyFunctionProgramming",
+      "type": "concept",
+      "name": "FuzzyFunctionProgramming",
+      "description": "A programming paradigm that compiles a function from a natural-language specification into a compact, locally-executable neural artifact.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "ProgramAsWeights",
+      "type": "concept",
+      "name": "ProgramAsWeights",
+      "description": "A paradigm where a compiler emits parameter-efficient adapters for a frozen, lightweight interpreter to execute programs.",
+      "category": "workflow",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "DirectPrompting",
+      "type": "concept",
+      "name": "DirectPrompting",
+      "description": "A technique where a model is directly prompted to solve a problem for each input.",
+      "category": "prompt_engineering",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "RiskControl",
+      "type": "concept",
+      "name": "RiskControl",
+      "description": "A statistical framework used to calibrate a threshold for turning a verifier signal into an alarm decision.",
+      "category": "protocol",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "SequentialHypothesisTesting",
+      "type": "concept",
+      "name": "SequentialHypothesisTesting",
+      "description": "A statistical method used as a basis for advanced monitoring of model outputs over time.",
+      "category": "protocol",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    },
+    {
+      "id": "ReContext",
+      "type": "concept",
+      "name": "ReContext",
+      "description": "A training-free inference method that uses model-internal relevance signals to construct a query-conditioned evidence pool and replays it before final generation to improve long-context reasoning.",
+      "category": "reasoning",
+      "sources": [
+        "arxiv_extraction"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "source": "DistributedAttacksInPersistentstateAiControl",
+      "target": "IterativeVibeCoding",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "DistributedAttacksInPersistentstateAiControl",
+      "target": "StatefulLinkTracker",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "DistributedAttacksInPersistentstateAiControl",
+      "target": "TrajectoryMonitor",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "DistributedAttacksInPersistentstateAiControl",
+      "target": "DiffMonitor",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "DistributedAttacksInPersistentstateAiControl",
+      "target": "MonitorEnsemble",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "IterativeVibeCoding",
+      "target": "AiControl",
+      "type": "USED_IN",
+      "evidence": "we introduce Iterative VibeCoding, a setting for AI control, the study of safely deploying capable but potentially untrusted AI"
+    },
+    {
+      "source": "StatefulLinkTrackerMonitor",
+      "target": "DiffMonitors",
+      "type": "EXTENDS",
+      "evidence": "it detects gradual attacks substantially better than diff monitors that merely see more accumulated history"
+    },
+    {
+      "source": "FourMonitorEnsemble",
+      "target": "StatefulLinkTrackerMonitor",
+      "type": "IMPLEMENTS",
+      "evidence": "Combining this stronger monitor with trajectory monitors in a four-monitor ensemble"
+    },
+    {
+      "source": "FourMonitorEnsemble",
+      "target": "TrajectoryMonitors",
+      "type": "IMPLEMENTS",
+      "evidence": "Combining this stronger monitor with trajectory monitors in a four-monitor ensemble"
+    },
+    {
+      "source": "GradualAttacks",
+      "target": "PersistentStateAttackSurface",
+      "type": "RELATED_TO",
+      "evidence": "confirming this is a property of the persistent-state attack surface rather than a single model's capability"
+    },
+    {
+      "source": "GradualAttacks",
+      "target": "NonGradualAttacks",
+      "type": "RELATED_TO",
+      "evidence": "We compare gradual attacks, which distribute the side task across PRs, against non-gradual attacks concentrated in a single PR"
+    },
+    {
+      "source": "LacunaATestbedForEvaluatingLocalizationPrecisionForLlmUnlearning",
+      "target": "MachineUnlearning",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "LacunaATestbedForEvaluatingLocalizationPrecisionForLlmUnlearning",
+      "target": "LocalizeFirstUnlearnSecond",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "LacunaATestbedForEvaluatingLocalizationPrecisionForLlmUnlearning",
+      "target": "Lacuna",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "LacunaATestbedForEvaluatingLocalizationPrecisionForLlmUnlearning",
+      "target": "MaskedContinualPretraining",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "LacunaATestbedForEvaluatingLocalizationPrecisionForLlmUnlearning",
+      "target": "GradientBasedUnlearning",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "Lacuna",
+      "target": "Unlearning",
+      "type": "USED_IN",
+      "evidence": "We use LACUNA to benchmark current SOTA unlearning methods"
+    },
+    {
+      "source": "SotaUnlearningMethods",
+      "target": "LocalizeFirstUnlearnSecondParadigm",
+      "type": "IMPLEMENTS",
+      "evidence": "state-of-the-art(SOTA) methods often following a localize-first, unlearn-second paradigm"
+    },
+    {
+      "source": "GradientBasedUnlearning",
+      "target": "ParameterLevelLocalization",
+      "type": "DEPENDS_ON",
+      "evidence": "when localization is successful, even a simple gradient-based unlearning method achieves strong erasure"
+    },
+    {
+      "source": "ResurfacingAttacks",
+      "target": "Unlearning",
+      "type": "RELATED_TO",
+      "evidence": "reinforced by the success of resurfacing attacks... susceptible to resurfacing attacks"
+    },
+    {
+      "source": "ProgramasweightsAProgrammingParadigmForFuzzyFunctions",
+      "target": "FuzzyFunctionProgramming",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "ProgramasweightsAProgrammingParadigmForFuzzyFunctions",
+      "target": "ProgramAsWeights",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "ProgramasweightsAProgrammingParadigmForFuzzyFunctions",
+      "target": "DirectPrompting",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "ProgramAsWeights",
+      "target": "FuzzyFunctionProgramming",
+      "type": "IMPLEMENTS",
+      "evidence": "We instantiate this paradigm with Program-as-Weights (PAW)"
+    },
+    {
+      "source": "FuzzyBench",
+      "target": "ProgramAsWeights",
+      "type": "USED_IN",
+      "evidence": "4B compiler trained on FuzzyBench... emits parameter-efficient adapters"
+    },
+    {
+      "source": "ProgramAsWeights",
+      "target": "Qwen3Interpreter",
+      "type": "USED_IN",
+      "evidence": "A 0.6B Qwen3 interpreter executing PAW programs"
+    },
+    {
+      "source": "OnlineSafetyMonitoringForLlms",
+      "target": "RiskControl",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "OnlineSafetyMonitoringForLlms",
+      "target": "SequentialHypothesisTesting",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "RealTimeMonitor",
+      "target": "VerifierSignal",
+      "type": "DEPENDS_ON",
+      "evidence": "We study a simple real-time monitor that turns a verifier signal from an external model into an alarm decision"
+    },
+    {
+      "source": "RealTimeMonitor",
+      "target": "Thresholding",
+      "type": "DEPENDS_ON",
+      "evidence": "into an alarm decision by thresholding"
+    },
+    {
+      "source": "RealTimeMonitor",
+      "target": "RiskControl",
+      "type": "DEPENDS_ON",
+      "evidence": "with the threshold calibrated via risk control"
+    },
+    {
+      "source": "SequentialHypothesisTesting",
+      "target": "AdvancedMonitors",
+      "type": "USED_IN",
+      "evidence": "competitive with more advanced monitors based on sequential hypothesis testing"
+    },
+    {
+      "source": "RecontextRecursiveEvidenceReplayAsLlmHarnessForLongcontextReasoning",
+      "target": "ReContext",
+      "type": "PROPOSES"
+    },
+    {
+      "source": "ReContext",
+      "target": "LongContextReasoning",
+      "type": "SUPPORTS",
+      "evidence": "RECONTEXT, a training-free inference method for improving long-context reasoning."
+    },
+    {
+      "source": "ReContext",
+      "target": "AssociativeMemory",
+      "type": "REFERENCES",
+      "evidence": "We also provide a theoretical analysis based on associative memory"
+    },
+    {
+      "source": "ReContext",
+      "target": "Qwen34B",
+      "type": "USED_IN",
+      "evidence": "RECONTEXT consistently improves evidence utilization across Qwen3-4B"
+    },
+    {
+      "source": "ReContext",
+      "target": "Qwen38B",
+      "type": "USED_IN",
+      "evidence": "RECONTEXT consistently improves evidence utilization across Qwen3-8B"
+    },
+    {
+      "source": "ReContext",
+      "target": "Llama38B",
+      "type": "USED_IN",
+      "evidence": "RECONTEXT consistently improves evidence utilization across Llama3-8B"
+    }
+  ]
+}

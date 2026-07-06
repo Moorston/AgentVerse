@@ -28,21 +28,21 @@ async def export_json(
     """
     # Fetch nodes
     if label:
-        nodes = await repo.run(_query(
+        nodes = await repo.execute_raw(
             f"MATCH (n:{label}) RETURN n LIMIT $limit",
             {"limit": limit},
-        ))
+        )
     else:
-        nodes = await repo.run(_query(
+        nodes = await repo.execute_raw(
             "MATCH (n) RETURN n LIMIT $limit",
             {"limit": limit},
-        ))
+        )
 
     # Fetch relationships
-    rels = await repo.run(_query(
+    rels = await repo.execute_raw(
         "MATCH (a)-[r]->(b) RETURN a.name AS source, b.name AS target, type(r) AS rel_type LIMIT $limit",
         {"limit": limit},
-    ))
+    )
 
     return {
         "nodes": [
@@ -76,15 +76,15 @@ async def export_csv(
 ) -> StreamingResponse:
     """Export knowledge graph nodes as CSV."""
     if label:
-        nodes = await repo.run(_query(
+        nodes = await repo.execute_raw(
             f"MATCH (n:{label}) RETURN n.name AS name, n.description AS description, labels(n) AS labels SKIP 0 LIMIT $limit",
             {"limit": limit},
-        ))
+        )
     else:
-        nodes = await repo.run(_query(
+        nodes = await repo.execute_raw(
             "MATCH (n) RETURN n.name AS name, n.description AS description, labels(n) AS labels SKIP 0 LIMIT $limit",
             {"limit": limit},
-        ))
+        )
 
     output = io.StringIO()
     writer = csv.writer(output)
@@ -102,8 +102,3 @@ async def export_csv(
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=agentverse_export.csv"},
     )
-
-
-def _query(cql: str, params: dict[str, Any]) -> Any:
-    from agentverse.graph_core.models.query import Query
-    return Query(cql, params)

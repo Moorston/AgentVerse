@@ -2,10 +2,13 @@
 
 from typing import Any
 
+from agentverse.crawler.types import PaperS2Dict
+
 import httpx
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -22,18 +25,18 @@ class SemanticScholarCrawler(BaseCrawler):
 
     async def crawl(
         self,
-        query: str = "",
-        arxiv_ids: list[str] | None = None,
-        max_results: int = 50,
-        **kwargs: Any,
+        request: CrawlRequest | None = None,
     ) -> CrawlResult:
         """Fetch paper data from Semantic Scholar.
 
         Args:
-            query: Search query.
-            arxiv_ids: List of arXiv IDs to look up.
-            max_results: Maximum results.
+            request: Structured request with optional ``query``, ``arxiv_ids``,
+                and ``max_results`` fields.
         """
+        r: CrawlRequest = request or {}
+        query: str = r.get("query", "")
+        arxiv_ids: list[str] | None = r.get("arxiv_ids")  # type: ignore[assignment]
+        max_results: int = r.get("max_results", 50)
         items: list[dict[str, Any]] = []
         errors: list[str] = []
 
@@ -64,7 +67,7 @@ class SemanticScholarCrawler(BaseCrawler):
         logger.info("Semantic Scholar crawl complete", papers=len(items), errors=len(errors))
         return CrawlResult(source="semantic_scholar", items=items, errors=errors)
 
-    async def _fetch_paper_by_arxiv(self, arxiv_id: str, headers: dict[str, str]) -> dict[str, Any] | None:
+    async def _fetch_paper_by_arxiv(self, arxiv_id: str, headers: dict[str, str]) -> PaperS2Dict | None:
         """Fetch paper by arXiv ID."""
         fields = "paperId,title,abstract,authors,citationCount,influentialCitationCount,year,externalIds,references"
         async with httpx.AsyncClient(timeout=30) as client:
@@ -93,7 +96,7 @@ class SemanticScholarCrawler(BaseCrawler):
                 "reference_count": len(references),
             }
 
-    async def _search_papers(self, query: str, limit: int, headers: dict[str, str]) -> list[dict[str, Any]]:
+    async def _search_papers(self, query: str, limit: int, headers: dict[str, str]) -> list[PaperS2Dict]:
         """Search papers by query."""
         fields = "paperId,title,abstract,authors,citationCount,year"
         async with httpx.AsyncClient(timeout=30) as client:

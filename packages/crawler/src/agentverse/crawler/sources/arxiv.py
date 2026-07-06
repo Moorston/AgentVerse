@@ -4,15 +4,18 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import Any
 
+from agentverse.crawler.types import PaperDict
+
 import httpx
 
 from agentverse.crawler.base import BaseCrawler, CrawlResult
 from agentverse.crawler.rate_limiter import RateLimiter
+from agentverse.crawler.types import CrawlRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
-ARXIV_API_URL = "http://export.arxiv.org/api/query"
+ARXIV_API_URL = "https://export.arxiv.org/api/query"
 ARXIV_NS = {"atom": "http://www.w3.org/2005/Atom"}
 
 # AI/ML relevant categories
@@ -27,20 +30,19 @@ class ArxivCrawler(BaseCrawler):
 
     async def crawl(
         self,
-        categories: list[str] | None = None,
-        max_results: int = 100,
-        since: str = "",
-        search_query: str = "",
-        **kwargs: Any,
+        request: CrawlRequest | None = None,
     ) -> CrawlResult:
         """Fetch recent papers from ArXiv API.
 
         Args:
-            categories: ArXiv categories to search (default: cs.AI, cs.LG, cs.CL).
-            max_results: Maximum number of papers to return.
-            since: ISO date string to filter papers published after this date.
-            search_query: Additional search query terms.
+            request: Structured request with optional ``categories``, ``max_results``,
+                ``since``, and ``search_query`` fields.
         """
+        r: CrawlRequest = request or {}
+        categories: list[str] | None = r.get("categories")  # type: ignore[assignment]
+        max_results: int = r.get("max_results", 100)
+        since: str = r.get("since", "")
+        search_query: str = r.get("search_query", "")
         cats = categories or DEFAULT_CATEGORIES
         cat_query = " OR ".join(f"cat:{cat}" for cat in cats)
         query = f"({cat_query})"
@@ -81,10 +83,10 @@ class ArxivCrawler(BaseCrawler):
         logger.info("ArXiv crawl complete", papers=len(items), errors=len(errors))
         return CrawlResult(source="arxiv", items=items, errors=errors)
 
-    def _parse_response(self, xml_text: str, since: str = "") -> list[dict[str, Any]]:
+    def _parse_response(self, xml_text: str, since: str = "") -> list[PaperDict]:
         """Parse arXiv Atom XML response into structured paper dicts."""
         root = ET.fromstring(xml_text)
-        papers: list[dict[str, Any]] = []
+        papers: list[PaperDict] = []
 
         for entry in root.findall("atom:entry", ARXIV_NS):
             paper = self._parse_entry(entry)
@@ -94,7 +96,7 @@ class ArxivCrawler(BaseCrawler):
 
         return papers
 
-    def _parse_entry(self, entry: ET.Element) -> dict[str, Any]:
+    def _parse_entry(self, entry: ET.Element) -> PaperDict:
         """Parse a single arXiv Atom entry."""
         title = self._text(entry, "atom:title", "").strip().replace("\n", " ")
         abstract = self._text(entry, "atom:summary", "").strip().replace("\n", " ")

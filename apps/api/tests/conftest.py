@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock
 import pytest
 from fastapi import FastAPI
 
-from agentverse.api.core.dependencies import get_repository
+from agentverse.api.core.context import AppContext, get_context
 from agentverse.graph_core.models.query import Query
 from agentverse.shared.logging import get_logger
 
@@ -20,7 +20,7 @@ class MockRepository:
         self._nodes: dict[str, dict[str, Any]] = {}
         self._queries: list[Query] = []
 
-    async def run(self, query: Query) -> list[dict[str, Any]]:
+    async def _run(self, query: Query) -> list[dict[str, Any]]:
         """Execute a mock query."""
         self._queries.append(query)
         stmt = query.statement.lower()
@@ -35,6 +35,10 @@ class MockRepository:
 
         return []
 
+    async def execute_raw(self, cql: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+        """Execute a mock Cypher query."""
+        return await self._run(Query(cql, params or {}))
+
     async def create_node(self, labels: list[str], properties: dict[str, Any]) -> dict[str, Any]:
         """Create a mock node."""
         name = properties.get("name", "")
@@ -44,6 +48,11 @@ class MockRepository:
     async def find_node(self, label: str, name: str) -> dict[str, Any] | None:
         """Find a mock node."""
         return self._nodes.get(name)
+
+    async def find_by_name(self, label: str, name: str) -> dict[str, Any] | None:
+        """Find a mock node by label and name."""
+        node = self._nodes.get(name)
+        return {"n": node} if node else None
 
     async def find_nodes_by_label(self, label: str, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
         """Find mock nodes by label."""
@@ -60,13 +69,17 @@ class MockRepository:
         """Delete a mock node."""
         return self._nodes.pop(name, None) is not None
 
+    async def delete_by_name(self, label: str, name: str) -> bool:
+        """Delete a mock node by label and name."""
+        return self._nodes.pop(name, None) is not None
+
     async def get_neighbors(self, label: str, name: str, depth: int = 1) -> dict[str, Any]:
         """Get mock neighbors."""
         return {"nodes": [], "relationships": []}
 
     async def execute(self, cql: str, parameters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
-        """Execute a mock Cypher query."""
-        return await self.run(Query(cql, parameters or {}))
+        """Execute a mock Cypher query (legacy alias)."""
+        return await self._run(Query(cql, parameters or {}))
 
 
 @pytest.fixture
@@ -76,13 +89,23 @@ def mock_repo() -> MockRepository:
 
 
 @pytest.fixture
-def app_with_mock(mock_repo: MockRepository) -> FastAPI:
-    """Return FastAPI app with mocked Neo4j dependency."""
+def mock_context(mock_repo: MockRepository) -> AppContext:
+    """Return a mock AppContext backed by MockRepository."""
+    from agentverse.shared.config import Settings
+    ctx = AppContext(Settings())
+    # Patch get_repository to return the mock directly
+    ctx.get_repository = AsyncMock(return_value=mock_repo)  # type: ignore[method-assign]
+    return ctx
+
+
+@pytest.fixture
+def app_with_mock(mock_context: AppContext) -> FastAPI:
+    """Return FastAPI app with mocked AppContext dependency."""
     from agentverse.api.main import app
 
-    async def _get_mock_repo() -> MockRepository:
-        return mock_repo
+    async def _get_mock_context() -> AppContext:
+        return mock_context
 
-    app.dependency_overrides[get_repository] = _get_mock_repo
+    app.dependency_overrides[get_context] = _get_mock_context
     yield app
     app.dependency_overrides.clear()

@@ -87,5 +87,5 @@ class HybridSearch:
 
         # Sort by combined score descending
         merged.sort(key=lambda x: x.get("score", 0), reverse=True)
-        logger.info("Hybrid search complete", query=query, results=len(merged[:top_k]))
+        logger.info("Hybrid search complete", results=len(merged[:top_k]))
         return merged[:top_k]

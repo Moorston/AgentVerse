@@ -23,6 +23,7 @@ class Settings(BaseSettings):
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o"
+    openai_base_url: str = ""
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-sonnet-4-20250514"
 

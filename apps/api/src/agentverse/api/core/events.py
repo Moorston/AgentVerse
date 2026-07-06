@@ -5,26 +5,31 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from agentverse.api.core.dependencies import get_graph_client, close_connections
+from agentverse.api.core.context import AppContext
 from agentverse.graph_core.schema.constraints import apply_constraints
 from agentverse.graph_core.schema.indexes import apply_indexes
+from agentverse.shared.config import Settings
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    """Manage application lifecycle."""
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Manage application lifecycle via AppContext."""
     logger.info("api_startup")
 
-    # Initialize database connections
+    # Create the shared context and store it on app.state
+    settings = Settings()
+    context = AppContext(settings)
+    app.state.context = context
+
+    # Probe Neo4j and apply schema if available
     try:
-        client = await get_graph_client()
+        client = await context.get_client()
         healthy = await client.health_check()
         if healthy:
             logger.info("neo4j_connection_healthy")
-            # Apply schema on startup
             await apply_constraints(client)
             await apply_indexes(client)
             logger.info("neo4j_schema_applied")
@@ -36,4 +41,4 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     yield
 
     logger.info("api_shutdown")
-    await close_connections()
+    await context.close()

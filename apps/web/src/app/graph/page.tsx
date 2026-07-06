@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { GraphCanvas } from "@/components/graph/GraphCanvas";
-import { GraphControls } from "@/components/graph/GraphControls";
+import React, { Suspense, useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type { GraphData } from "@/types/graph";
+import { LoadingSkeleton } from "@/components/ui/Loading";
+import { UI_TEXT } from "@/lib/i18n";
+
+const GraphCanvas = React.lazy(() => import("@/components/graph/GraphCanvas").then(m => ({ default: m.GraphCanvas })));
+const GraphControls = React.lazy(() => import("@/components/graph/GraphControls").then(m => ({ default: m.GraphControls })));
 
 // Demo data for development
 const DEMO_DATA: GraphData = {
@@ -32,10 +36,32 @@ const DEMO_DATA: GraphData = {
 };
 
 export default function GraphExplorer() {
+  const router = useRouter();
   const [data, setData] = useState<GraphData>(DEMO_DATA);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("");
+  const [activeFilter, setActiveFilter] = useState<string[]>([]);
+  const [highlightNode, setHighlightNode] = useState<string | undefined>(undefined);
+
+  // Load initial graph data from JSON file
+  useEffect(() => {
+    let cancelled = false;
+    async function loadJsonData() {
+      try {
+        const res = await fetch("/data/knowledge_graph.json");
+        if (res.ok && !cancelled) {
+          const json = await res.json();
+          if (json.nodes && json.edges) {
+            setData(json as GraphData);
+          }
+        }
+      } catch {
+        // Keep DEMO_DATA as fallback
+      }
+    }
+    loadJsonData();
+    return () => { cancelled = true; };
+  }, []);
 
   // Fetch graph data from API
   const fetchData = useCallback(async (query?: string) => {
@@ -53,8 +79,8 @@ export default function GraphExplorer() {
         }
       }
     } catch {
-      // Use demo data on error
-      console.log("Using demo data");
+      // Keep current data on error
+      console.log("Using existing data");
     } finally {
       setLoading(false);
     }
@@ -75,14 +101,23 @@ export default function GraphExplorer() {
     // TODO: Expand neighbors on click
   }, []);
 
-  // Filter nodes by type
-  const filteredData: GraphData = activeFilter
+  const handleNodeDoubleClick = useCallback(
+    (nodeId: string) => {
+      const node = data.nodes.find((n) => n.id === nodeId);
+      const name = node?.label || nodeId;
+      router.push(`/concept/${encodeURIComponent(name)}`);
+    },
+    [data.nodes, router],
+  );
+
+  // Filter nodes by type (used for info display only; GraphCanvas handles visual filtering)
+  const filteredData: GraphData = activeFilter.length > 0
     ? {
-        nodes: data.nodes.filter((n) => n.type === activeFilter),
+        nodes: data.nodes.filter((n) => activeFilter.includes(n.type)),
         edges: data.edges.filter(
           (e) =>
-            data.nodes.some((n) => n.id === e.source && n.type === activeFilter) ||
-            data.nodes.some((n) => n.id === e.target && n.type === activeFilter),
+            data.nodes.some((n) => n.id === e.source && activeFilter.includes(n.type)) ||
+            data.nodes.some((n) => n.id === e.target && activeFilter.includes(n.type)),
         ),
       }
     : data;
@@ -92,26 +127,39 @@ export default function GraphExplorer() {
       {/* Sidebar */}
       <aside className="w-64 border-r bg-gray-50 flex-shrink-0">
         <div className="p-4 border-b">
-          <h2 className="text-lg font-semibold">Graph Explorer</h2>
+          <h2 className="text-lg font-semibold">{UI_TEXT.graphExplorer}</h2>
           <p className="text-xs text-gray-500 mt-1">
-            {filteredData.nodes.length} nodes, {filteredData.edges.length} edges
+            {filteredData.nodes.length} {UI_TEXT.nodes}, {filteredData.edges.length} {UI_TEXT.edges}
           </p>
         </div>
-        <GraphControls
-          onSearch={setSearchQuery}
-          onFilter={setActiveFilter}
-          activeFilter={activeFilter}
-        />
+        <Suspense fallback={<LoadingSkeleton rows={5} />}>
+          <GraphControls
+            onSearch={setSearchQuery}
+            onFilter={setActiveFilter}
+            activeFilter={activeFilter}
+            highlightNode={highlightNode}
+            onHighlight={setHighlightNode}
+          />
+        </Suspense>
       </aside>
 
       {/* Graph Canvas */}
       <main className="flex-1 relative">
         {loading && (
           <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
-            <div className="text-gray-500">Loading graph...</div>
+            <div className="text-gray-500">{UI_TEXT.loading}</div>
           </div>
         )}
-        <GraphCanvas data={filteredData} onNodeClick={handleNodeClick} className="w-full h-full" />
+        <Suspense fallback={<LoadingSkeleton rows={3} />}>
+          <GraphCanvas
+            data={filteredData}
+            onNodeClick={handleNodeClick}
+            onNodeDoubleClick={handleNodeDoubleClick}
+            filterType={activeFilter}
+            highlightNode={highlightNode}
+            className="w-full h-full"
+          />
+        </Suspense>
       </main>
     </div>
   );

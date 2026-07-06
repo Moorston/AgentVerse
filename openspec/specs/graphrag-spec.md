@@ -39,6 +39,9 @@ combined_score = 0.6 * vector_score + 0.4 * graph_score
 3. HybridSearch MUST deduplicate results by node name
 4. IndexingPipeline MUST use batch embedding for efficiency
 5. Neo4j and pgvector linked via node_id (no direct JOIN)
+6. VectorSearch SHALL accept a store instance via constructor injection — no cross-package imports from `agentverse.api.*`
+7. GraphRAGEngine.initialize() SHALL pass the created PgVectorStore instance to VectorSearch and IndexingPipeline
+8. The `graphrag.retrieval` package SHALL export VectorSearch, GraphSearch, HybridSearch, and PgVectorStore
 
 ## Test Criteria
 - [ ] VectorSearch returns cosine-similarity-ranked results
