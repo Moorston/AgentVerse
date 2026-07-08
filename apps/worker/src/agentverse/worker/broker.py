@@ -1,10 +1,12 @@
 """TaskIQ broker configuration for AgentVerse worker.
 
-Uses MemoryBroker for zero-dependency in-process execution.
-To switch to distributed execution, replace with RedisBroker:
+Supports two backends:
+- **InMemoryBroker** (default): Zero-dependency in-process execution for development.
+- **RedisBroker**: Distributed execution for production.
 
-    from taskiq_redis import RedisBroker
-    broker = RedisBroker("redis://localhost:6379")
+Controlled by the ``TASKIQ_BROKER`` environment variable:
+  - ``inmemory`` (default) → InMemoryBroker
+  - ``redis`` → RedisBroker(settings.taskiq_redis_dsn)
 """
 
 import asyncio
@@ -12,10 +14,24 @@ import asyncio
 from taskiq import InMemoryBroker, TaskiqEvents, TaskiqState
 
 from agentverse.shared.logging import get_logger
+from agentverse.worker.config import WorkerSettings
 
 logger = get_logger(__name__)
 
-broker = InMemoryBroker()
+# Resolve broker type from environment
+_settings = WorkerSettings()
+
+if _settings.taskiq_broker == "redis":
+    try:
+        from taskiq_redis import RedisBroker
+        broker = RedisBroker(_settings.taskiq_redis_dsn)
+        logger.info("Broker: RedisBroker", dsn=_settings.taskiq_redis_dsn)
+    except ImportError:
+        logger.warning("RedisBroker not available (install taskiq_redis), falling back to InMemoryBroker")
+        broker = InMemoryBroker()
+else:
+    broker = InMemoryBroker()
+    logger.info("Broker: InMemoryBroker")
 
 
 # ---------------------------------------------------------------------------

@@ -5,6 +5,9 @@ from httpx import AsyncClient, ASGITransport
 
 from agentverse.api.main import create_app
 
+DEV_API_KEY = "av-dev-key"
+AUTH_HEADERS = {"Authorization": f"Bearer {DEV_API_KEY}"}
+
 
 @pytest.fixture
 def app():
@@ -19,20 +22,27 @@ def client(app):
 
 @pytest.mark.asyncio
 async def test_timeline_endpoint(client):
-    """/concepts/timeline/{name} should return 200."""
-    response = await client.get("/api/v1/concepts/timeline/ReAct")
+    """/concepts/timeline/{name} should return 200 with auth."""
+    response = await client.get("/api/v1/concepts/timeline/ReAct", headers=AUTH_HEADERS)
     assert response.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_connections_endpoint(client):
-    """/concepts/connections/{name} should return 200."""
-    response = await client.get("/api/v1/concepts/connections/ReAct")
+    """/concepts/connections/{name} should return 200 with auth."""
+    response = await client.get("/api/v1/concepts/connections/ReAct", headers=AUTH_HEADERS)
     assert response.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_search_endpoint(client):
-    """/search/ should return 200."""
-    response = await client.get("/api/v1/search/", params={"q": "agent"})
+    """/search/ should return 200 with auth."""
+    response = await client.get("/api/v1/search/", params={"q": "agent"}, headers=AUTH_HEADERS)
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_timeline_without_auth(client):
+    """/concepts/timeline/{name} should return 401 without auth."""
+    response = await client.get("/api/v1/concepts/timeline/ReAct")
+    assert response.status_code == 401

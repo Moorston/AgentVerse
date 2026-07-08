@@ -43,10 +43,11 @@ def test_rate_limiter_per_client():
 
 
 def test_rate_limiter_headers():
-    """Test that rate limit headers are correct."""
+    """Test that rate limit headers are correct (remaining counted before recording)."""
     limiter = RateLimiter(requests_per_minute=100, requests_per_hour=1000)
     request = MockRequest()
     _, headers = limiter.is_allowed(request)
     assert headers["X-RateLimit-Limit-Minute"] == "100"
-    assert headers["X-RateLimit-Remaining-Minute"] == "99"
+    assert headers["X-RateLimit-Remaining-Minute"] == "100"
     assert headers["X-RateLimit-Limit-Hour"] == "1000"
+    assert headers["X-RateLimit-Remaining-Hour"] == "1000"

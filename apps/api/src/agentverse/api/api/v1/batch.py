@@ -25,8 +25,9 @@ class BatchRelationshipRequest(BaseModel):
 
 class BatchResponse(BaseModel):
     """Response model for batch operations."""
-    created: int
-    errors: int
+    created: int = 0
+    deleted: int = 0
+    errors: int = 0
     details: list[str] = []
 
 
@@ -124,4 +125,4 @@ async def batch_delete_concepts(
             details.append(f"Error deleting '{name}': {exc}")
 
     logger.info("Batch delete complete", deleted=deleted, errors=errors)
-    return BatchResponse(created=deleted, errors=errors, details=details[:20])
+    return BatchResponse(deleted=deleted, errors=errors, details=details[:20])

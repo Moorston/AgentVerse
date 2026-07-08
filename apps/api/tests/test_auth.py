@@ -1,4 +1,5 @@
 """Tests for API authentication with key management."""
+import pytest
 
 from agentverse.api.core.auth import APIKeyAuth, get_auth
 from agentverse.api.core.key_management import generate_api_key, revoke_api_key
@@ -13,14 +14,20 @@ class MockRequest:
         self.url = type("URL", (), {"path": path})()
 
 
-def test_auth_development_mode():
-    """Test that auth is disabled in development mode."""
-    settings = Settings(environment="development")
-    auth = APIKeyAuth(settings)
-    request = MockRequest()
+def test_auth_development_mode_with_dev_key():
+    """Test that auth uses the pre-loaded dev key in development mode."""
+    auth = APIKeyAuth()
+    request = MockRequest(headers={"Authorization": "Bearer av-dev-key"})
     valid, msg = auth.validate(request)
     assert valid is True
-    assert msg == ""
+
+
+def test_auth_development_mode_without_key():
+    """Test that auth fails without a key even in development mode."""
+    auth = APIKeyAuth()
+    request = MockRequest()
+    valid, msg = auth.validate(request)
+    assert valid is False
 
 
 def test_auth_public_endpoints():

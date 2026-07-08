@@ -1,6 +1,6 @@
 """Tests for shared utility functions."""
 
-import asyncio
+import pytest
 
 from agentverse.shared.utils.text import truncate, slugify
 from agentverse.shared.utils.retry import retry
@@ -28,7 +28,8 @@ def test_slugify_slashes():
     assert slugify("a/b/c") == "a-b-c"
 
 
-def test_retry_success():
+@pytest.mark.asyncio
+async def test_retry_success():
     """Retry decorator should return result on success."""
     call_count = 0
 
@@ -38,19 +39,17 @@ def test_retry_success():
         call_count += 1
         return "ok"
 
-    result = asyncio.get_event_loop().run_until_complete(success_func())
+    result = await success_func()
     assert result == "ok"
     assert call_count == 1
 
 
-def test_retry_exhaustion():
+@pytest.mark.asyncio
+async def test_retry_exhaustion():
     """Retry decorator should raise after max attempts."""
     @retry(max_attempts=2, delay=0.01)
     async def fail_func():
         raise ValueError("always fails")
 
-    try:
-        asyncio.get_event_loop().run_until_complete(fail_func())
-        assert False, "Should have raised"
-    except ValueError:
-        pass
+    with pytest.raises(ValueError):
+        await fail_func()

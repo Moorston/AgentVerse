@@ -4,7 +4,10 @@ import asyncio
 import json
 from typing import Any
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+
+from agentverse.api.core.key_management import validate_api_key
+from agentverse.shared.logging import get_logger
 
 from agentverse.shared.logging import get_logger
 
@@ -25,9 +28,12 @@ class ConnectionManager:
         logger.info("WebSocket connected", total=len(self._connections))
 
     def disconnect(self, websocket: WebSocket) -> None:
-        """Remove a disconnected WebSocket."""
-        self._connections.remove(websocket)
-        logger.info("WebSocket disconnected", total=len(self._connections))
+        """Remove a disconnected WebSocket safely."""
+        try:
+            self._connections.remove(websocket)
+            logger.info("WebSocket disconnected", total=len(self._connections))
+        except ValueError:
+            logger.warning("WebSocket disconnect: connection not found")
 
     async def broadcast(self, message: dict[str, Any]) -> None:
         """Broadcast a message to all connected clients."""
@@ -47,9 +53,13 @@ manager = ConnectionManager()
 
 
 @router.websocket("/ws/graph")
-async def graph_websocket(websocket: WebSocket) -> None:
+async def graph_websocket(
+    websocket: WebSocket,
+    token: str = Query(""),
+) -> None:
     """WebSocket endpoint for real-time graph updates.
 
+    Requires a valid API key as ``token`` query parameter.
     Messages sent to client:
     - {"type": "node_created", "data": {...}}
     - {"type": "node_deleted", "data": {...}}
@@ -60,6 +70,15 @@ async def graph_websocket(websocket: WebSocket) -> None:
     - {"type": "subscribe", "labels": ["Concept", "Framework"]}
     - {"type": "ping"}
     """
+    # Authenticate before accepting
+    if not token:
+        await websocket.close(code=4001, reason="Missing authentication token")
+        return
+    valid, _ = validate_api_key(token)
+    if not valid:
+        await websocket.close(code=4001, reason="Invalid authentication token")
+        return
+
     await manager.connect(websocket)
     try:
         while True:

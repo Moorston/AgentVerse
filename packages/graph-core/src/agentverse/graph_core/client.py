@@ -1,28 +1,57 @@
-"""Neo4j driver wrapper for async operations."""
+"""Neo4j driver wrapper for async operations with retry support."""
 
 from typing import Any
 
 from neo4j import AsyncGraphDatabase, AsyncDriver, AsyncSession
+from neo4j.exceptions import ServiceUnavailable
 
 from agentverse.shared.config import Settings
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
+MAX_RETRIES = 3
+RETRY_BACKOFF_BASE = 0.5  # seconds; doubles each attempt
+
+import asyncio
+
+
+async def _retry(coro_factory, *, max_retries: int = MAX_RETRIES, label: str = "operation") -> Any:
+    """Execute an async callable with exponential backoff on ServiceUnavailable."""
+    last_exc: Exception | None = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            return await coro_factory()
+        except ServiceUnavailable as exc:
+            last_exc = exc
+            wait = RETRY_BACKOFF_BASE * (2 ** (attempt - 1))
+            logger.warning(
+                "neo4j_retry",
+                label=label,
+                attempt=attempt,
+                max_retries=max_retries,
+                wait_seconds=round(wait, 2),
+                error=str(exc),
+            )
+            if attempt < max_retries:
+                await asyncio.sleep(wait)
+    raise last_exc  # type: ignore[misc]
+
 
 class GraphClient:
-    """Async Neo4j client wrapper."""
+    """Async Neo4j client wrapper with connection retry support."""
 
     def __init__(self, settings: Settings | None = None) -> None:
         self._settings = settings or Settings()
         self._driver: AsyncDriver | None = None
 
     async def connect(self) -> None:
-        """Initialize the Neo4j driver."""
+        """Initialize the Neo4j driver and verify connectivity."""
         self._driver = AsyncGraphDatabase.driver(
             self._settings.neo4j_uri,
             auth=(self._settings.neo4j_user, self._settings.neo4j_password),
         )
+        await _retry(lambda: self._driver.verify_connectivity(), label="verify_connectivity")
         logger.info("Neo4j driver initialized", uri=self._settings.neo4j_uri)
 
     async def close(self) -> None:

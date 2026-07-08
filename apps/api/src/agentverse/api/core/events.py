@@ -19,10 +19,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Manage application lifecycle via AppContext."""
     logger.info("api_startup")
 
-    # Create the shared context and store it on app.state
-    settings = Settings()
-    context = AppContext(settings)
-    app.state.context = context
+    # Reuse context if already created by create_app(), otherwise create one.
+    context: AppContext = getattr(app.state, "context", None)
+    if context is None:
+        settings = Settings()
+        context = AppContext(settings)
+        app.state.context = context
 
     # Probe Neo4j and apply schema if available
     try:

@@ -16,7 +16,14 @@ _api_keys: dict[str, dict[str, Any]] = {}
 
 # Default keys for development
 if Settings().environment == "development":
-    _api_keys["av-dev-key"] = {"name": "Development Key", "role": "admin", "active": True}
+    _api_keys["av-dev-key"] = {
+        "name": "Development Key",
+        "role": "admin",
+        "active": True,
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "last_used": None,
+        "usage_count": 0,
+    }
 
 
 def generate_api_key(name: str = "", role: str = "user") -> str:

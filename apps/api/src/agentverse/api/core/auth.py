@@ -39,10 +39,6 @@ class APIKeyAuth:
         Returns:
             (is_valid, role_or_error)
         """
-        # In development mode, skip auth
-        if self._settings.environment == "development":
-            return True, ""
-
         # Check Authorization header first
         auth_header = request.headers.get("Authorization", "")
         if auth_header:
@@ -58,7 +54,7 @@ class APIKeyAuth:
                 return True, result
 
         if auth_header or api_key:
-            logger.warning("Authentication failed", reason=result if 'result' in dir() else "invalid key")
+            logger.warning("Authentication failed", reason=result)
         return False, "Missing or invalid API key"
 
 

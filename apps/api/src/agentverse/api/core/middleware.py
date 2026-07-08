@@ -1,4 +1,4 @@
-"""CORS, logging, error handling, rate limiting, and request timing middleware."""
+"""CORS, authentication, logging, error handling, rate limiting, and request timing middleware."""
 
 import time
 import traceback
@@ -8,26 +8,81 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from agentverse.api.core.auth import APIKeyAuth
 from agentverse.api.core.rate_limiter import get_rate_limiter
+from agentverse.shared.config import Settings
 from agentverse.shared.exceptions import AgentVerseError, DatabaseError, NotFoundError
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
 
+# Endpoints that don't require authentication
+PUBLIC_ENDPOINTS = frozenset({
+    "/docs",
+    "/redoc",
+    "/openapi.json",
+    "/api/v1/health",
+    "/api/v1/metrics",
+})
+
 
 def setup_middleware(app: FastAPI) -> None:
-    """Configure middleware for the FastAPI app."""
+    """Configure middleware for the FastAPI app.
 
-    # CORS — must be first
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    Middleware order (first = outermost):
+    Auth → CORS → Rate Limiter → Request Logging → Error Handler
+    """
+    _settings = Settings()
 
-    # Rate limiting + request timing + logging
+    # ── 1. Authentication (outermost — reject early, save resources) ──
+    @app.middleware("http")
+    async def auth_middleware(request: Request, call_next: Any) -> Any:
+        """Authenticate every request except public endpoints."""
+        path = request.url.path
+
+        # Allow public endpoints without auth
+        if path in PUBLIC_ENDPOINTS or path.startswith("/docs") or path.startswith("/redoc"):
+            return await call_next(request)
+
+        # Skip auth for WebSocket (handled inside the handler)
+        if path == "/api/v1/ws/graph":
+            return await call_next(request)
+
+        # Validate API key
+        auth_handler = APIKeyAuth(_settings)
+        valid, role = auth_handler.validate(request)
+        if not valid:
+            return JSONResponse(
+                status_code=401,
+                content={"error": "Unauthorized", "detail": "Missing or invalid API key", "status_code": 401},
+            )
+
+        # Attach role for downstream use
+        request.state.auth_role = role
+        return await call_next(request)
+
+    # ── 2. CORS ──
+    cors_origins = _settings.cors_origins
+    if _settings.environment == "development":
+        # Development: allow all origins, no credentials
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=False,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+    else:
+        # Production: restricted origins
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins or ["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+
+    # ── 3. Rate limiting + request timing + logging ──
     @app.middleware("http")
     async def log_and_rate_limit(request: Request, call_next: Any) -> Any:
         """Log every request, enforce rate limits, and measure timing."""
@@ -36,7 +91,7 @@ def setup_middleware(app: FastAPI) -> None:
         path = request.url.path
 
         # Skip rate limiting for docs and health
-        if path in ("/docs", "/redoc", "/openapi.json", "/api/v1/health"):
+        if path in PUBLIC_ENDPOINTS:
             response = await call_next(request)
             elapsed = (time.monotonic() - start) * 1000
             response.headers["X-Response-Time"] = f"{elapsed:.2f}ms"
@@ -65,8 +120,6 @@ def setup_middleware(app: FastAPI) -> None:
                 elapsed_ms=round(elapsed, 2),
                 error=str(exc),
             )
-            # Return 500 JSON instead of re-raising — exception handlers
-            # registered on the app do NOT intercept middleware exceptions.
             return JSONResponse(
                 status_code=500,
                 content={
@@ -99,7 +152,8 @@ def setup_middleware(app: FastAPI) -> None:
 
         return response
 
-    # Global exception handlers
+    # ── 4. Global exception handlers ──
+
     @app.exception_handler(NotFoundError)
     async def not_found_handler(request: Request, exc: NotFoundError) -> JSONResponse:
         return JSONResponse(

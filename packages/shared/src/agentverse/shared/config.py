@@ -17,9 +17,9 @@ class Settings(BaseSettings):
 
     neo4j_uri: str = "bolt://localhost:7687"
     neo4j_user: str = "neo4j"
-    neo4j_password: str = "agentverse_dev"
+    neo4j_password: str = ""
 
-    postgres_dsn: str = "postgresql+asyncpg://agentverse:agentverse_dev@localhost:5432/agentverse"
+    postgres_dsn: str = ""
 
     openai_api_key: str = ""
     openai_model: str = "gpt-4o"
@@ -29,3 +29,5 @@ class Settings(BaseSettings):
 
     embedding_model: str = "text-embedding-3-small"
     embedding_dimension: int = 1536
+
+    cors_origins: list[str] = []

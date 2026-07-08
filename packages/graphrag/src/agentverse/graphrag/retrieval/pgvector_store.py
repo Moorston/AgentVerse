@@ -55,6 +55,18 @@ class PgVectorStore:
             await self._pool.close()
         logger.info("PgVectorStore closed")
 
+    async def health_check(self) -> bool:
+        """Check if the database connection is healthy."""
+        if not self._pool:
+            return False
+        try:
+            async with self._pool.acquire() as conn:
+                await conn.fetchval("SELECT 1")
+            return True
+        except Exception as exc:
+            logger.error("PgVectorStore health check failed", error=str(exc))
+            return False
+
     async def _ensure_schema(self) -> None:
         """Create the extension and table if they do not exist."""
         assert self._pool

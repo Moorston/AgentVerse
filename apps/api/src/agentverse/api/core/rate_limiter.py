@@ -49,11 +49,6 @@ class RateLimiter:
             self._hour_windows[client_id], 3600.0
         )
 
-        # Record this request BEFORE computing headers
-        # so that remaining reflects the current request
-        self._minute_windows[client_id].append(now)
-        self._hour_windows[client_id].append(now)
-
         minute_count = len(self._minute_windows[client_id])
         hour_count = len(self._hour_windows[client_id])
 
@@ -64,15 +59,19 @@ class RateLimiter:
             "X-RateLimit-Remaining-Hour": str(max(0, self._rph - hour_count)),
         }
 
-        if minute_count > self._rpm:
+        if minute_count >= self._rpm:
             retry_after = int(60 - (now - self._minute_windows[client_id][0]))
             headers["Retry-After"] = str(max(1, retry_after))
             return False, headers
 
-        if hour_count > self._rph:
+        if hour_count >= self._rph:
             retry_after = int(3600 - (now - self._hour_windows[client_id][0]))
             headers["Retry-After"] = str(max(1, retry_after))
             return False, headers
+
+        # Record this request AFTER confirming it's within limits
+        self._minute_windows[client_id].append(now)
+        self._hour_windows[client_id].append(now)
 
         return True, headers
 

@@ -19,6 +19,11 @@ class MockRepository:
     def __init__(self) -> None:
         self._nodes: dict[str, dict[str, Any]] = {}
         self._queries: list[Query] = []
+        self._raw_results: dict[str, list[dict[str, Any]]] = {}
+
+    def set_raw_result(self, cql_pattern: str, results: list[dict[str, Any]]) -> None:
+        """Pre-program raw query results for a CQL pattern."""
+        self._raw_results[cql_pattern] = results
 
     async def _run(self, query: Query) -> list[dict[str, Any]]:
         """Execute a mock query."""
@@ -28,6 +33,11 @@ class MockRepository:
         # Health check
         if "return 1" in stmt or "return count" in stmt:
             return [{"total": 0}]
+
+        # Check pre-programmed raw results
+        for pattern, results in self._raw_results.items():
+            if pattern.lower() in stmt:
+                return results
 
         # MATCH ... RETURN
         if "match" in stmt and "return" in stmt:
@@ -100,8 +110,9 @@ def mock_context(mock_repo: MockRepository) -> AppContext:
 
 @pytest.fixture
 def app_with_mock(mock_context: AppContext) -> FastAPI:
-    """Return FastAPI app with mocked AppContext dependency."""
-    from agentverse.api.main import app
+    """Return FastAPI app with mocked AppContext dependency, created fresh each test."""
+    from agentverse.api.main import create_app
+    app = create_app()
 
     async def _get_mock_context() -> AppContext:
         return mock_context

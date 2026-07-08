@@ -4,9 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from agentverse.api.api.v1.router import api_v1_router
+from agentverse.api.core.context import AppContext
 from agentverse.api.core.events import lifespan
 from agentverse.api.core.middleware import setup_middleware
 from agentverse.api.core.versioning import versioning_middleware
+from agentverse.shared.config import Settings
 
 
 def create_app() -> FastAPI:
@@ -65,6 +67,10 @@ AgentVerse API provides access to a structured knowledge graph covering:
     setup_middleware(app)
     app.middleware("http")(versioning_middleware)
     app.include_router(api_v1_router, prefix="/api/v1")
+
+    # Eagerly create AppContext so it's available even when lifespan
+    # doesn't run (e.g. tests using httpx.ASGITransport).
+    app.state.context = AppContext(Settings())
 
     return app
 

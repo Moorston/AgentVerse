@@ -44,18 +44,20 @@ async def health_check(ctx: AppContext = Depends(get_context)) -> dict:
 
     # Check pgvector
     try:
-        from agentverse.api.db.postgres import VectorStore
+        from agentverse.graphrag.retrieval.pgvector_store import PgVectorStore
         from agentverse.shared.config import Settings
         settings = Settings()
-        store = VectorStore(dsn=settings.postgres_dsn)
-        await store.connect()
-        pg_ok = await store.health_check()
-        embed_count = await store.count()
-        health["services"]["pgvector"] = {
-            "status": "ok" if pg_ok else "unavailable",
-            "embeddings": embed_count,
-        }
-        await store.close()
+        store = PgVectorStore(dsn=settings.postgres_dsn)
+        try:
+            await store.connect()
+            pg_ok = await store.health_check()
+            embed_count = await store.count()
+            health["services"]["pgvector"] = {
+                "status": "ok" if pg_ok else "unavailable",
+                "embeddings": embed_count,
+            }
+        finally:
+            await store.close()
     except Exception as exc:
         health["services"]["pgvector"] = {"status": "unavailable", "error": str(exc)[:100]}
 

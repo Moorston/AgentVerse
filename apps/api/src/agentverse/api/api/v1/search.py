@@ -75,5 +75,5 @@ async def _fallback_search(q: str, top_k: int, ctx: AppContext) -> SearchRespons
         ]
         return SearchResponse(query=q, results=search_results)
     except Exception as exc:
-        logger.error("Fallback search also failed", error=str(exc))
+        logger.warning("Fallback search also failed", error=str(exc))
         return SearchResponse(query=q, results=[])

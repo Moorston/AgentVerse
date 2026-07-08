@@ -22,12 +22,13 @@ class IndexingPipeline:
         self._graph_client = graph_client
         self._vector_store = vector_store
 
-    async def run(self, labels: list[str] | None = None, batch_size: int = 50) -> int:
+    async def run(self, labels: list[str] | None = None, batch_size: int = 50, max_nodes_per_label: int = 10000) -> int:
         """Index all nodes of given labels into pgvector.
 
         Args:
             labels: Node labels to index (default: all Concept-based labels).
             batch_size: Batch size for embedding requests.
+            max_nodes_per_label: Maximum nodes to index per label (default 10000).
 
         Returns:
             Number of indexed nodes.
@@ -39,18 +40,18 @@ class IndexingPipeline:
 
         total_indexed = 0
         for label in target_labels:
-            count = await self._index_label(label, batch_size)
+            count = await self._index_label(label, batch_size, max_nodes_per_label)
             total_indexed += count
 
         logger.info("Indexing complete", total=total_indexed)
         return total_indexed
 
-    async def _index_label(self, label: str, batch_size: int) -> int:
+    async def _index_label(self, label: str, batch_size: int, max_nodes: int) -> int:
         """Index all nodes of a given label."""
         nodes = await self._graph_client.execute(
             f"MATCH (n:{label}) "
             f"RETURN elementId(n) AS id, n.name AS name, n.description AS description "
-            f"LIMIT 1000"
+            f"LIMIT {max_nodes}"
         )
 
         if not nodes:

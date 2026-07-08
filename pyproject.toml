@@ -75,6 +75,13 @@ exclude_lines = [
     "raise NotImplementedError",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "respx>=0.23.1",
+]
+
 # ============================================
 # UV SOURCES (cross-package dependency mapping)
 # ============================================
