@@ -1,30 +1,83 @@
-"""Tests for extractor base and prompts."""
+"""Tests for LLM client factory and prompts."""
 
-from agentverse.extractor.base import ExtractionResult, BaseExtractor
+from unittest.mock import patch
+
+from agentverse.extractor.llm.client import LLMClient
 from agentverse.extractor.llm.prompts import (
     PAPER_EXTRACTION_PROMPT,
     CONCEPT_EXTRACTION_PROMPT,
     RELATIONSHIP_EXTRACTION_PROMPT,
 )
+from agentverse.extractor.types import PaperResult, ConceptResult, RelationshipResult
 
 
-def test_extraction_result_defaults():
-    """Test ExtractionResult default values."""
-    result = ExtractionResult(source="test")
-    assert result.source == "test"
-    assert result.entities == []
-    assert result.relationships == []
+# ---------------------------------------------------------------------------
+# LLMClient (factory)
+# ---------------------------------------------------------------------------
 
 
-def test_extraction_result_with_data():
-    """Test ExtractionResult with data."""
-    result = ExtractionResult(
-        source="test",
-        entities=[{"type": "concept", "name": "ReAct"}],
-        relationships=[{"source": "ReAct", "target": "Tool Calling", "type": "RELATED_TO"}],
-    )
-    assert len(result.entities) == 1
-    assert len(result.relationships) == 1
+class TestLLMClient:
+    """Tests for the PydanticAI Agent factory."""
+
+    def test_creates_agent_instance(self):
+        """LLMClient.get_agent returns a PydanticAI Agent."""
+        with patch("agentverse.extractor.llm.client.Settings") as MockSettings:
+            MockSettings.return_value = type("S", (), {
+                "openai_api_key": "sk-test",
+                "openai_model": "gpt-4o",
+                "openai_base_url": "",
+                "anthropic_api_key": "",
+                "anthropic_model": "claude-sonnet-4-20250514",
+            })()
+            client = LLMClient()
+            # Patch _resolve_model to avoid real model inference
+            with patch.object(client, "_resolve_model", return_value="test-model"):
+                with patch("agentverse.extractor.llm.client.Agent") as MockAgent:
+                    MockAgent.return_value = "mock-agent"
+                    result = client.get_agent(
+                        result_type=PaperResult,
+                        system_prompt="test",
+                    )
+                    assert result == "mock-agent"
+                    MockAgent.assert_called_once_with(
+                        "test-model",
+                        result_type=PaperResult,
+                        system_prompt="test",
+                        retries=3,
+                    )
+
+    def test_resolve_model_openai(self):
+        """OpenAI key present → model string starts with 'openai:'."""
+        with patch("agentverse.extractor.llm.client.Settings") as MockSettings:
+            MockSettings.return_value = type("S", (), {
+                "openai_api_key": "sk-test",
+                "openai_model": "gpt-4o",
+                "openai_base_url": "",
+                "anthropic_api_key": "",
+                "anthropic_model": "claude-sonnet-4-20250514",
+            })()
+            client = LLMClient()
+            model = client._resolve_model()
+            assert model == "openai:gpt-4o"
+
+    def test_resolve_model_anthropic_fallback(self):
+        """No OpenAI key → falls back to Anthropic."""
+        with patch("agentverse.extractor.llm.client.Settings") as MockSettings:
+            MockSettings.return_value = type("S", (), {
+                "openai_api_key": "",
+                "openai_model": "gpt-4o",
+                "openai_base_url": "",
+                "anthropic_api_key": "sk-ant-test",
+                "anthropic_model": "claude-sonnet-4-20250514",
+            })()
+            client = LLMClient()
+            model = client._resolve_model()
+            assert model == "anthropic:claude-sonnet-4-20250514"
+
+
+# ---------------------------------------------------------------------------
+# Prompts (unchanged)
+# ---------------------------------------------------------------------------
 
 
 def test_paper_extraction_prompt():

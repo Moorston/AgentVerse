@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "pgvector>=0.3",
     "asyncpg>=0.30",
+    "cachetools>=5.0,<6.0",
     "agentverse-graph-core",
     "agentverse-shared",
 ]

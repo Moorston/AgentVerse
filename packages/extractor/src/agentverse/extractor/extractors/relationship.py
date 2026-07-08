@@ -1,18 +1,14 @@
-"""Relationship extraction using LLM."""
+"""Relationship extraction using PydanticAI."""
+
+from pydantic_ai import Agent
 
 from agentverse.extractor.base import BaseExtractor, ExtractionResult
 from agentverse.extractor.llm.client import LLMClient
 from agentverse.extractor.llm.prompts import RELATIONSHIP_EXTRACTION_PROMPT
-from agentverse.extractor.types import ExtractionRequest
+from agentverse.extractor.types import ExtractionRequest, RelationshipResult, VALID_RELATIONSHIP_TYPES
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
-
-VALID_RELATIONSHIP_TYPES = [
-    "PROPOSES", "IMPLEMENTS", "EVOLVES_TO", "RELATED_TO",
-    "DEPENDS_ON", "SUPPORTS", "USED_IN", "REFERENCES",
-    "CITES", "EXTENDS", "INSPIRED_BY",
-]
 
 SYSTEM_PROMPT = f"""You are an AI research relationship analyst. Extract relationships between concepts.
 
@@ -25,26 +21,25 @@ STRICT RULES:
 6. Do NOT reverse directions: "A extends B" means source=A, target=B
 
 GOOD: source="ReAct", target="ChainOfThought", type="EXTENDS"
-BAD: source="alignment training", target="LLMs", type="SUPPORTS"
-
-Return valid JSON:
-{{
-  "relationships": [
-    {{
-      "source": "PascalCaseSourceName",
-      "target": "PascalCaseTargetName",
-      "type": "one of the valid types above",
-      "evidence": "brief evidence from the text"
-    }}
-  ]
-}}"""
+BAD: source="alignment training", target="LLMs", type="SUPPORTS\""""
 
 
 class RelationshipExtractor(BaseExtractor):
     """Extract relationships between concepts."""
 
-    def __init__(self, llm_client: LLMClient | None = None) -> None:
-        self._client = llm_client or LLMClient()
+    def __init__(
+        self,
+        llm_client: LLMClient | None = None,
+        agent: Agent[None, RelationshipResult] | None = None,
+    ) -> None:
+        if agent is not None:
+            self._agent = agent
+        else:
+            client = llm_client or LLMClient()
+            self._agent = client.get_agent(
+                result_type=RelationshipResult,
+                system_prompt=SYSTEM_PROMPT,
+            )
 
     async def extract(self, request: ExtractionRequest) -> ExtractionResult:
         """Extract relationships from text."""
@@ -52,22 +47,20 @@ class RelationshipExtractor(BaseExtractor):
         prompt = RELATIONSHIP_EXTRACTION_PROMPT.format(text=text)
 
         try:
-            data = await self._client.complete_json(
-                prompt=prompt,
-                system_prompt=SYSTEM_PROMPT,
-            )
+            result = await self._agent.run(prompt)
+            data = result.data
         except Exception as exc:
             logger.error("Relationship extraction failed", error=str(exc))
             return ExtractionResult(source="relationship")
 
-        if not data:
+        if not data or not data.relationships:
             return ExtractionResult(source="relationship")
 
         relationships = []
-        for rel in data.get("relationships", []):
-            source = rel.get("source", "").strip()
-            target = rel.get("target", "").strip()
-            rel_type = rel.get("type", "RELATED_TO").upper()
+        for rel in data.relationships:
+            source = rel.source.strip()
+            target = rel.target.strip()
+            rel_type = rel.type.strip().upper() if rel.type else "RELATED_TO"
 
             if not source or not target:
                 continue
@@ -78,7 +71,7 @@ class RelationshipExtractor(BaseExtractor):
                 "source": source,
                 "target": target,
                 "type": rel_type,
-                "evidence": rel.get("evidence", ""),
+                "evidence": rel.evidence,
             })
 
         return ExtractionResult(source="relationship", relationships=relationships)

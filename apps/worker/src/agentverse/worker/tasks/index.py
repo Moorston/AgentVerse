@@ -1,9 +1,11 @@
-"""Index task — writes extracted data to Neo4j and pgvector."""
+"""Index task — writes extracted data to Neo4j and pgvector via TaskIQ."""
 
 from typing import Any
 
 from agentverse.graph_core.client import GraphClient
+from agentverse.shared.config import Settings
 from agentverse.shared.logging import get_logger
+from agentverse.worker.broker import broker
 
 logger = get_logger(__name__)
 
@@ -47,7 +49,6 @@ async def run_index(
             continue
 
         try:
-            props_str = ", ".join(f"{k}: ${k}" for k in props)
             cql = f"MERGE (n:{entity_type} {{name: $name}}) SET n += $props RETURN n"
             await graph_client.execute(cql, {"name": name, "props": props})
             entity_count += 1
@@ -77,3 +78,31 @@ async def run_index(
 
     logger.info("Indexing complete", entities=entity_count, relationships=rel_count)
     return {"entities_indexed": entity_count, "relationships_indexed": rel_count}
+
+
+@broker.task(
+    task_name="index_text",
+    retry_on_error=True,
+    max_retries=3,
+)
+async def index_text(extraction_result: dict[str, Any]) -> dict[str, int]:
+    """TaskIQ task: index extraction results into Neo4j.
+
+    Called by extract_text after successful extraction.
+    Initializes its own GraphClient since TaskIQ tasks are standalone.
+    """
+    logger.info("=== TaskIQ: index_text starting ===")
+
+    settings = Settings()
+    graph_client = GraphClient(settings)
+    try:
+        await graph_client.connect()
+        result = await run_index(
+            graph_client=graph_client,
+            entities=extraction_result.get("entities", []),
+            relationships=extraction_result.get("relationships", []),
+        )
+        logger.info("=== TaskIQ: index_text complete ===", result=result)
+        return result
+    finally:
+        await graph_client.close()

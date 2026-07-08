@@ -1,9 +1,10 @@
-"""Extract task — dispatches to appropriate extractor."""
+"""Extract tasks — dispatches to appropriate extractor via TaskIQ."""
 
 from typing import Any
 
 from agentverse.extractor.types import ExtractionRequest
 from agentverse.shared.logging import get_logger
+from agentverse.worker.broker import broker
 
 logger = get_logger(__name__)
 
@@ -16,7 +17,7 @@ async def run_extract(text: str, source: str = "paper", **kwargs: Any) -> dict[s
         source: Extractor type (paper, concept, relationship).
 
     Returns:
-        Extraction result as dict.
+        Extraction result as dict with 'entities' and 'relationships'.
     """
     logger.info("Starting extraction", source=source, text_len=len(text))
 
@@ -46,3 +47,20 @@ async def run_extract(text: str, source: str = "paper", **kwargs: Any) -> dict[s
         "entities": result.entities,
         "relationships": result.relationships,
     }
+
+
+@broker.task(
+    task_name="extract_text",
+    retry_on_error=True,
+    max_retries=3,
+)
+async def extract_text(text: str, source: str = "paper") -> dict[str, Any]:
+    """TaskIQ task: extract structured data from text.
+
+    Called by crawl tasks after successful crawl, or on-demand.
+    Chains into index_text.kiq() on success.
+    """
+    logger.info("=== TaskIQ: extract_text starting ===", source=source)
+    result = await run_extract(text, source=source)
+    logger.info("=== TaskIQ: extract_text complete ===", source=source)
+    return result

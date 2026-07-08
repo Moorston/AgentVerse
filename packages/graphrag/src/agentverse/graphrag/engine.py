@@ -113,7 +113,11 @@ class GraphRAGEngine:
         """Reindex all nodes into pgvector."""
         if not self._indexing_pipeline:
             raise RuntimeError("GraphRAGEngine not initialized.")
-        return await self._indexing_pipeline.run(labels=labels)
+        result = await self._indexing_pipeline.run(labels=labels)
+        # Clear search cache after reindex
+        if self._hybrid_search:
+            self._hybrid_search.clear_cache()
+        return result
 
     @property
     def graph_client(self) -> GraphClient:

@@ -1,9 +1,11 @@
-"""Concept extraction using LLM."""
+"""Concept extraction using PydanticAI."""
+
+from pydantic_ai import Agent
 
 from agentverse.extractor.base import BaseExtractor, ExtractionResult
 from agentverse.extractor.llm.client import LLMClient
 from agentverse.extractor.llm.prompts import CONCEPT_EXTRACTION_PROMPT
-from agentverse.extractor.types import ExtractionRequest
+from agentverse.extractor.types import ConceptResult, ExtractionRequest
 from agentverse.shared.logging import get_logger
 
 logger = get_logger(__name__)
@@ -19,25 +21,25 @@ STRICT RULES:
 Valid categories: reasoning, planning, memory, tool_use, reflection, multi_agent, workflow, protocol, rag, prompt_engineering
 
 GOOD examples: ChainOfThought, ReAct, Reflexion, ToolCalling, GraphRAG, ReWOO, PlanAndExecute
-BAD examples: LLMs, artificial intelligence, machine learning, large language model, the model, our method
-
-Return valid JSON:
-{
-  "concepts": [
-    {
-      "name": "PascalCaseName",
-      "description": "one sentence description",
-      "category": "one of the valid categories above"
-    }
-  ]
-}"""
+BAD examples: LLMs, artificial intelligence, machine learning, large language model, the model, our method"""
 
 
 class ConceptExtractor(BaseExtractor):
     """Extract AI Agent concepts from text."""
 
-    def __init__(self, llm_client: LLMClient | None = None) -> None:
-        self._client = llm_client or LLMClient()
+    def __init__(
+        self,
+        llm_client: LLMClient | None = None,
+        agent: Agent[None, ConceptResult] | None = None,
+    ) -> None:
+        if agent is not None:
+            self._agent = agent
+        else:
+            client = llm_client or LLMClient()
+            self._agent = client.get_agent(
+                result_type=ConceptResult,
+                system_prompt=SYSTEM_PROMPT,
+            )
 
     async def extract(self, request: ExtractionRequest) -> ExtractionResult:
         """Extract concepts and their relationships from text."""
@@ -45,27 +47,25 @@ class ConceptExtractor(BaseExtractor):
         prompt = CONCEPT_EXTRACTION_PROMPT.format(text=text)
 
         try:
-            data = await self._client.complete_json(
-                prompt=prompt,
-                system_prompt=SYSTEM_PROMPT,
-            )
+            result = await self._agent.run(prompt)
+            data = result.data
         except Exception as exc:
             logger.error("Concept extraction failed", error=str(exc))
             return ExtractionResult(source="concept")
 
-        if not data:
+        if not data or not data.concepts:
             return ExtractionResult(source="concept")
 
         entities = []
-        for concept in data.get("concepts", []):
-            name = concept.get("name", "").strip()
+        for concept in data.concepts:
+            name = concept.name.strip()
             if not name:
                 continue
             entities.append({
                 "type": "concept",
                 "name": name,
-                "description": concept.get("description", ""),
-                "category": concept.get("category", ""),
+                "description": concept.description,
+                "category": concept.category,
             })
 
         # Extract related_to relationships between co-occurring concepts

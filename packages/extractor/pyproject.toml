@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "openai>=1.0",
     "anthropic>=0.30",
+    "pydantic-ai>=0.2,<1.0",
     "agentverse-ontology",
     "agentverse-shared",
 ]
